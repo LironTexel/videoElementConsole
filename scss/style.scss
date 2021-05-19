@@ -7,8 +7,12 @@ $color-volumechange: #c74490;
 
 $color-disabled: #dedede;
 $color-slider: #2d78f6;
-$color-buffer: #2d78f6;
 $color-slider-focus: #015CC8;
+
+$color-buffered: #2d78f6;
+$color-played: #11ee11;
+$color-seekable: #444;
+$color-currentTime-marker: #aa1111;
 
 * {
   box-sizing: border-box;
@@ -162,17 +166,27 @@ html, body, #app {
       }
     }
 
-    .buffer-container {
+    .segments-container {
       display: flex;
       align-items: center;
 
-      .buffer-area {
+      .seekable-tag {
+        color: $color-seekable;
+      }
+      .buffered-tag {
+        color: $color-buffered;
+      }
+      .played-tag {
+        color: $color-played;
+      }
+
+      .segments-area {
         width: 100%;
         position: relative;
         margin: 10px 5px 15px;
 
         .currentTime-marker {
-          background: red;
+          background: $color-currentTime-marker;
           width: 3px;
           position: absolute;
           height: 20px;
@@ -180,7 +194,7 @@ html, body, #app {
           left: 0;
 
           &::before {
-            color: black;
+            color: $color-currentTime-marker;
             content: attr(currentTime-before);
             position: absolute;
             font-size: 10px;
@@ -188,16 +202,25 @@ html, body, #app {
           }
         }
 
-        .buffer-view {
+        .segments-view {
           width: 100%;
           height: 20px;
           background: lightgrey;
           position: relative;
           .segment {
+            &.buffered-segment {
+              background: $color-buffered;
+            }
+            &.played-segment {
+              background: $color-played;
+            }
+            &.seekable-segment {
+              background: $color-seekable;
+            }
             position: absolute;
             text-align: center;
             height: 20px;
-            background: $color-buffer;
+            background: $color-buffered;
             color: white;
             border-right: 1px solid white;
             &::before {

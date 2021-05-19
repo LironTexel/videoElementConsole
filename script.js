@@ -9,6 +9,19 @@ const MEDIA_ERROR_CODES = {
     3: 'MEDIA_ERR_DECODE',
     4: 'MEDIA_ERR_SRC_NOT_SUPPORTED',
 }
+const READY_STATE_CODES = {
+    0: 'HAVE_NOTHING',
+    1: 'HAVE_METADATA',
+    2: 'HAVE_CURRENT_DATA',
+    3: 'HAVE_FUTURE_DATA',
+    4: 'HAVE_ENOUGH_DATA',
+}
+const NETWORK_STATE_CODES = {
+    0: 'NETWORK_EMPTY',
+    1: 'NETWORK_IDLE',
+    2: 'NETWORK_LOADING',
+    3: 'NETWORK_NO_SOURCE',
+}
 const EVENTS_BINDS = {
     play: true,
     pause: true,
@@ -182,20 +195,34 @@ function initClearLogsButton() {
 }
 
 function initBufferView() {
-    window.bufferView = document.querySelector('.buffer-view');
+    window.segmentsView = document.querySelector('.segments-view');
     window.bufferCurrentTimeMarker = document.querySelector('.currentTime-marker');
-    video.addEventListener('progress', processBufferSegments , false);
+    video.addEventListener('timeupdate', processBufferSegments , false);
     video.addEventListener('timeupdate', updateMarkerPosition , false);
     video.addEventListener('loadedmetadata', updateMarkerPosition , false);
 
     function processBufferSegments() {
-        bufferView.innerHTML = ''
+        segmentsView.innerHTML = ''
+        for (let i = 0; i < video.seekable.length; i++) {
+            const segmentWidth = ((video.seekable.end(i) - video.seekable.start(i)) / video.duration) * 100;
+            const segmentLeft = (video.seekable.start(i) / video.duration) * 100;
+            const segmentEnd = roundFix(video.seekable.end(i));
+            segmentsView.innerHTML +=
+                `<div class="segment seekable-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%"></div>`
+        }
         for (let i = 0; i < video.buffered.length; i++) {
             const segmentWidth = ((video.buffered.end(i) - video.buffered.start(i)) / video.duration) * 100;
             const segmentLeft = (video.buffered.start(i) / video.duration) * 100;
             const segmentEnd = roundFix(video.buffered.end(i));
-            bufferView.innerHTML +=
-                `<div class="segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%">${i}</div>`
+            segmentsView.innerHTML +=
+                `<div class="segment buffered-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%">${i}</div>`
+        }
+        for (let i = 0; i < video.played.length; i++) {
+            const segmentWidth = ((video.played.end(i) - video.played.start(i)) / video.duration) * 100;
+            const segmentLeft = (video.played.start(i) / video.duration) * 100;
+            const segmentEnd = roundFix(video.played.end(i));
+            segmentsView.innerHTML +=
+                `<div class="segment played-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%">${i}</div>`
         }
     }
 

@@ -107,39 +107,51 @@ html, body, #app {
             background-color: white;
             -webkit-transition: .4s;
             transition: .4s; }
-    #app .dashboard-container .buffer-container {
+    #app .dashboard-container .segments-container {
       display: flex;
       align-items: center; }
-      #app .dashboard-container .buffer-container .buffer-area {
+      #app .dashboard-container .segments-container .seekable-tag {
+        color: #444; }
+      #app .dashboard-container .segments-container .buffered-tag {
+        color: #2d78f6; }
+      #app .dashboard-container .segments-container .played-tag {
+        color: #11ee11; }
+      #app .dashboard-container .segments-container .segments-area {
         width: 100%;
         position: relative;
         margin: 10px 5px 15px; }
-        #app .dashboard-container .buffer-container .buffer-area .currentTime-marker {
-          background: red;
+        #app .dashboard-container .segments-container .segments-area .currentTime-marker {
+          background: #aa1111;
           width: 3px;
           position: absolute;
           height: 20px;
           z-index: 2;
           left: 0; }
-          #app .dashboard-container .buffer-container .buffer-area .currentTime-marker::before {
-            color: black;
+          #app .dashboard-container .segments-container .segments-area .currentTime-marker::before {
+            color: #aa1111;
             content: attr(currentTime-before);
             position: absolute;
             font-size: 10px;
             top: 100%; }
-        #app .dashboard-container .buffer-container .buffer-area .buffer-view {
+        #app .dashboard-container .segments-container .segments-area .segments-view {
           width: 100%;
           height: 20px;
           background: lightgrey;
           position: relative; }
-          #app .dashboard-container .buffer-container .buffer-area .buffer-view .segment {
+          #app .dashboard-container .segments-container .segments-area .segments-view .segment {
             position: absolute;
             text-align: center;
             height: 20px;
             background: #2d78f6;
             color: white;
             border-right: 1px solid white; }
-            #app .dashboard-container .buffer-container .buffer-area .buffer-view .segment::before {
+            #app .dashboard-container .segments-container .segments-area .segments-view .segment.buffered-segment {
+              background: #2d78f6; }
+            #app .dashboard-container .segments-container .segments-area .segments-view .segment.played-segment {
+              background: #11ee11; }
+            #app .dashboard-container .segments-container .segments-area .segments-view .segment.seekable-segment {
+              background: #444; }
+            #app .dashboard-container .segments-container .segments-area .segments-view .segment::before {
               color: black;
               content: attr(end-before);
               right: 0;
