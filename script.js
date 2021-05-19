@@ -423,31 +423,32 @@ function initAutoplayInput() {
 function initPictureInPictureInput() {
     window.pictureInPictureInput = document.querySelector('.pictureInPicture-input');
     pictureInPictureInput.value = !!document.pictureInPictureElement;
-    document.getElementById('pictureInPicture-data').innerHTML = document.pictureInPictureElement?.toString() || 'none';
+    document.getElementById('pictureInPicture-data').innerHTML = document.pictureInPictureElement?.toString();
     video.addEventListener('loadedmetadata', () => document.querySelector('.pictureInPicture-input').removeAttribute('disabled'), false);
     pictureInPictureInput.addEventListener('change', function() {
-        this.checked && document.pictureInPictureEnabled ? video.requestPictureInPicture() : document.exitPictureInPicture();
-        setTimeout(() => {
-            document.getElementById('pictureInPicture-data').innerHTML = document.pictureInPictureElement?.toString() || 'none';
-        },0)
+        const reqPromise = this.checked && document.pictureInPictureEnabled ? video.requestPictureInPicture() : document.exitPictureInPicture();
+        reqPromise.then((res) => {
+            document.getElementById('pictureInPicture-data').innerHTML = res;
+        })
     })
 }
 
 function initFullScreenInput() {
     window.fullScreenInput = document.querySelector('.fullScreen-input');
     fullScreenInput.value = !!document.fullscreenElement;
-    document.getElementById('fullScreen-data').innerHTML = document.fullscreenElement?.toString() || 'none';
+    document.getElementById('fullScreen-data').innerHTML = document.fullscreenElement?.toString();
 
     fullScreenInput.addEventListener('change', function() {
-        this.checked && document.fullscreenEnabled ? video.requestFullscreen() : document.exitFullscreen();
-        setTimeout(() => {
-            document.getElementById('fullScreen-data').innerHTML = document.fullscreenElement?.toString() || 'none';
-        },0)
+        const reqPromise = this.checked && document.fullscreenEnabled ? video.requestFullscreen() : document.exitFullscreen();
+        reqPromise.then((res) => {
+            document.getElementById('fullScreen-data').innerHTML = res;
+        })
         setTimeout(() => {
             fullScreenInput.checked = false;
-            document.getElementById('fullScreen-data').innerHTML = 'none';
-            document.exitFullscreen();
-        }, 2000)
+            document.exitFullscreen().then((res) => {
+                document.getElementById('fullScreen-data').innerHTML = res;
+            })
+        }, 2000);
     })
 }
 
