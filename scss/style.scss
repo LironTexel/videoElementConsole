@@ -7,6 +7,7 @@ $color-volumechange: #c74490;
 
 $color-disabled: #dedede;
 $color-slider: #2d78f6;
+$color-buffer: #2d78f6;
 $color-slider-focus: #015CC8;
 
 * {
@@ -55,7 +56,8 @@ html, body, #app {
       flex-wrap: wrap;
 
       .input {
-        width: 14.25%;
+        width: calc(20% - 4px);
+        margin: 2px;
         padding: 10px;
         border: 1px solid lightgrey;
         position: relative;
@@ -65,7 +67,7 @@ html, body, #app {
         align-items: center;
         background: white;
         height: 60px;
-        min-width: 160px;
+        min-width: 180px;
         min-height: 80px;
 
         &.preload, &.pause {
@@ -150,13 +152,68 @@ html, body, #app {
         }
       }
     }
+
+    .metadata-container {}
+
+    .buffer-container {
+      display: flex;
+      align-items: center;
+
+      .buffer-area {
+        width: 100%;
+        position: relative;
+        margin: 10px 5px 15px;
+
+        .currentTime-marker {
+          background: red;
+          width: 3px;
+          position: absolute;
+          height: 20px;
+          z-index: 2;
+          left: 0;
+
+          &::before {
+            color: black;
+            content: attr(currentTime-before);
+            position: absolute;
+            font-size: 10px;
+            top: 100%;
+          }
+        }
+
+        .buffer-view {
+          width: 100%;
+          height: 20px;
+          background: lightgrey;
+          position: relative;
+          .segment {
+            position: absolute;
+            text-align: center;
+            height: 20px;
+            background: $color-buffer;
+            color: white;
+            border-right: 1px solid white;
+            &::before {
+              color: black;
+              content: attr(end-before);
+              right: 0;
+              position: absolute;
+              font-size: 10px;
+              top: -10px;
+            }
+          }
+        }
+      }
+    }
+
+
   }
 
   .video-container {
     grid-area: video-container;
     overflow: auto;
     resize: vertical;
-    height: 450px;
+    height: 350px;
     .video-wrapper {
       text-align: center;
     }

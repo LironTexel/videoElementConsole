@@ -49,6 +49,7 @@ initVideoData();
 initSelectAllButton();
 initClearLogsButton();
 initInputs();
+initBufferView();
 
 ////////////////////// INIT LOG FUNCTIONS //////////////////////
 
@@ -123,9 +124,6 @@ function initVideoData() {
     document.getElementById('duration-data').innerHTML = video.duration;
     video.addEventListener('loadedmetadata', () => document.getElementById('duration-data').innerHTML = video.duration, false);
 
-    video.addEventListener('progress', () => document.getElementById('buffered-start-data').innerHTML = video.buffered?.start(0) , false);
-    video.addEventListener('progress', () => document.getElementById('buffered-end-data').innerHTML = video.buffered?.end(0) , false);
-
     document.getElementById('playback-quality-data').innerHTML = parseVideoPlaybackQuality(video.getVideoPlaybackQuality())
     video.addEventListener('timeupdate', () => document.getElementById('playback-quality-data').innerHTML = parseVideoPlaybackQuality(video.getVideoPlaybackQuality()) , false);
     function parseVideoPlaybackQuality(data) {
@@ -158,6 +156,35 @@ function initClearLogsButton() {
     clearLogsButton.addEventListener('click', () => {
         logs.innerHTML = '';
     })
+}
+
+function initBufferView() {
+    window.bufferView = document.querySelector('.buffer-view');
+    window.bufferCurrentTimeMarker = document.querySelector('.currentTime-marker');
+    video.addEventListener('progress', processBufferSegments , false);
+    video.addEventListener('timeupdate', updateMarkerPosition , false);
+
+    function processBufferSegments() {
+        bufferView.innerHTML = ''
+        for (let i = 0; i < video.buffered.length; i++) {
+            const segmentWidth = ((video.buffered.end(i) - video.buffered.start(i)) / video.duration) * 100;
+            const segmentLeft = (video.buffered.start(i) / video.duration) * 100;
+            const segmentEnd = roundFix(video.buffered.end(i));
+            bufferView.innerHTML +=
+                `<div class="segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%">${i}</div>`
+        }
+    }
+
+    function updateMarkerPosition() {
+        const position = (video.currentTime / video.duration) * 100;
+        bufferCurrentTimeMarker.style.left = position + '%';
+        bufferCurrentTimeMarker.setAttribute('currentTime-before', roundFix(video.currentTime));
+    }
+
+    function roundFix(num, toFixed = 2) {
+        return parseFloat(num).toFixed(toFixed);
+    }
+
 }
 
 ////////////////////// INIT INPUT FUNCTIONS //////////////////////

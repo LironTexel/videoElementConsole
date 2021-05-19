@@ -14,14 +14,28 @@
         <div class="video-container container grid-item">
             <div class="video-wrapper">
                 <video class="player" preload="none" controls="controls">
-                    <source src=http://techslides.com/demos/sample-videos/small.webm type=video/webm>
-                    <source src=http://techslides.com/demos/sample-videos/small.ogv type=video/ogg>
-                    <source src=http://techslides.com/demos/sample-videos/small.mp4 type=video/mp4>
-                    <source src=http://techslides.com/demos/sample-videos/small.3gp type=video/3gp>
+
+<!--                    <source src=http://techslides.com/demos/sample-videos/small.webm type=video/webm>-->
+<!--                    <source src=http://techslides.com/demos/sample-videos/small.ogv type=video/ogg>-->
+<!--                    <source src=http://techslides.com/demos/sample-videos/small.mp4 type=video/mp4>-->
+<!--                    <source src=http://techslides.com/demos/sample-videos/small.3gp type=video/3gp>-->
+
+                    <source src="https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4" type="video/mp4">
+                    <source src="https://archive.org/download/ElephantsDream/ed_hd.ogv" type="video/ogg">
+                    <source src="https://archive.org/download/ElephantsDream/ed_hd.avi" type="video/avi">
+                    Your browser doesn't support HTML5 video tag.
                 </video>
             </div>
         </div>
         <div class="dashboard-container container grid-item">
+                <div class="buffer-container">
+                    <div>Buffer:</div>
+                    <div class="buffer-area">
+                        <div class="currentTime-marker"></div>
+                        <div class="buffer-view"></div>
+                    </div>
+                </div>
+
             <div class="controls-container">
                 <div class="pause input">
                     <button class="play-button">Play</button>
@@ -138,8 +152,6 @@
                 <div>video.currentSrc: <span id="currentSrc-data"></span></div>
                 <div>video.poster: <span id="poster-data"></span></div>
                 <div>video.getVideoPlaybackQuality(): <span id="playback-quality-data"></span></div>
-                <div>video.buffered.start(0): <span id="buffered-start-data"></span></div>
-                <div>video.buffered.end(0): <span id="buffered-end-data"></span></div>
                 <div>video.duration: <span id="duration-data"></span></div>
             </div>
         </div>

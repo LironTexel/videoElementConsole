@@ -32,7 +32,8 @@ html, body, #app {
       display: flex;
       flex-wrap: wrap; }
       #app .dashboard-container .controls-container .input {
-        width: 14.25%;
+        width: calc(20% - 4px);
+        margin: 2px;
         padding: 10px;
         border: 1px solid lightgrey;
         position: relative;
@@ -42,7 +43,7 @@ html, body, #app {
         align-items: center;
         background: white;
         height: 60px;
-        min-width: 160px;
+        min-width: 180px;
         min-height: 80px; }
         #app .dashboard-container .controls-container .input.preload, #app .dashboard-container .controls-container .input.pause {
           flex-direction: row; }
@@ -100,11 +101,50 @@ html, body, #app {
             background-color: white;
             -webkit-transition: .4s;
             transition: .4s; }
+    #app .dashboard-container .buffer-container {
+      display: flex;
+      align-items: center; }
+      #app .dashboard-container .buffer-container .buffer-area {
+        width: 100%;
+        position: relative;
+        margin: 10px 5px 15px; }
+        #app .dashboard-container .buffer-container .buffer-area .currentTime-marker {
+          background: red;
+          width: 3px;
+          position: absolute;
+          height: 20px;
+          z-index: 2;
+          left: 0; }
+          #app .dashboard-container .buffer-container .buffer-area .currentTime-marker::before {
+            color: black;
+            content: attr(currentTime-before);
+            position: absolute;
+            font-size: 10px;
+            top: 100%; }
+        #app .dashboard-container .buffer-container .buffer-area .buffer-view {
+          width: 100%;
+          height: 20px;
+          background: lightgrey;
+          position: relative; }
+          #app .dashboard-container .buffer-container .buffer-area .buffer-view .segment {
+            position: absolute;
+            text-align: center;
+            height: 20px;
+            background: #2d78f6;
+            color: white;
+            border-right: 1px solid white; }
+            #app .dashboard-container .buffer-container .buffer-area .buffer-view .segment::before {
+              color: black;
+              content: attr(end-before);
+              right: 0;
+              position: absolute;
+              font-size: 10px;
+              top: -10px; }
   #app .video-container {
     grid-area: video-container;
     overflow: auto;
     resize: vertical;
-    height: 450px; }
+    height: 350px; }
     #app .video-container .video-wrapper {
       text-align: center; }
   #app .main-logs-container {
