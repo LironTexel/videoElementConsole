@@ -75,7 +75,7 @@ html, body, #app {
         min-height: 80px;
 
         &.wide {
-          width: calc(41.5% - 4px);
+          width: calc(33.2% - 4px);
         }
 
         &.preload, &.pause, &.currentSrc, &.src, &.poster, &.getVideoPlaybackQuality {

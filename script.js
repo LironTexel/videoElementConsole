@@ -64,11 +64,12 @@ video.width = VIDEO_WIDTH;
 initLogBindsView();
 bindVideoEvents();
 
-initVideoData();
 initSelectAllButton();
 initClearLogsButton();
+initSegmentsView();
+
+initVideoData();
 initInputs();
-initBufferView();
 
 ////////////////////// INIT LOG FUNCTIONS //////////////////////
 
@@ -102,7 +103,7 @@ function bindVideoEvents() {
     video.addEventListener('durationchange', e => logsHandler(e, e.target.duration) , false);
     video.addEventListener('emptied', e => logsHandler(e) , false);
     video.addEventListener('ended', e => logsHandler(e, e.target.ended) , false);
-    video.addEventListener('error', e => logsHandler(e, MEDIA_ERROR_CODES[e.target.error.code]) , false);
+    video.addEventListener('error', e => logsHandler(e, MEDIA_ERROR_CODES[e.target.error?.code]) , false);
     video.addEventListener('loadeddata', e => logsHandler(e) , false);
     video.addEventListener('loadedmetadata', e => logsHandler(e) , false);
     video.addEventListener('loadstart', e => logsHandler(e) , false);
@@ -134,40 +135,6 @@ function bindVideoEvents() {
 ////////////////////// INIT VIEW FUNCTIONS //////////////////////
 
 /**
- * Updates the data section and adds event listeners
- */
-function initVideoData() {
-    document.getElementById('currentSrc-data').innerHTML = video.currentSrc;
-    document.getElementById('currentSrcInput').value = video.currentSrc;
-    video.addEventListener('loadedmetadata', () => {
-        document.getElementById('currentSrc-data').innerHTML = video.currentSrc;
-        document.getElementById('currentSrcInput').value = video.currentSrc;
-    });
-
-    document.getElementById('duration-data').innerHTML = video.duration;
-    document.getElementById('duration-info').innerHTML = video.duration;
-    video.addEventListener('loadedmetadata', () => {
-        document.getElementById('duration-data').innerHTML = video.duration;
-        document.getElementById('duration-info').innerHTML = video.duration;
-    });
-
-    function updateVideoFramesData() {
-        document.getElementById('playbackQuality-total-info').innerHTML = video.getVideoPlaybackQuality().totalVideoFrames;
-        document.getElementById('playbackQuality-dropped-info').innerHTML = video.getVideoPlaybackQuality().droppedVideoFrames;
-        document.getElementById('playbackQuality-corrupted-info').innerHTML = video.getVideoPlaybackQuality().corruptedVideoFrames;
-        document.getElementById('getVideoPlaybackQuality-data').innerHTML = parseVideoPlaybackQuality(video.getVideoPlaybackQuality())
-
-        function parseVideoPlaybackQuality(data) {
-            return `totalVideoFrames: ${data.totalVideoFrames}, droppedVideoFrames: ${data.droppedVideoFrames}, corruptedVideoFrames: ${data.corruptedVideoFrames}`;
-        }
-    }
-    updateVideoFramesData();
-    video.addEventListener('timeupdate', () => {
-        updateVideoFramesData();
-    }, false);
-}
-
-/**
  * Initialise the Select All button
  */
 function initSelectAllButton() {
@@ -194,42 +161,61 @@ function initClearLogsButton() {
     })
 }
 
-function initBufferView() {
+/**
+ * Initialise segments view
+ */
+function initSegmentsView() {
     window.segmentsView = document.querySelector('.segments-view');
-    window.bufferCurrentTimeMarker = document.querySelector('.currentTime-marker');
-    video.addEventListener('timeupdate', processBufferSegments , false);
+    window.seekableView = document.querySelector('.seekable-view');
+    window.bufferedView = document.querySelector('.buffered-view');
+    window.playedView = document.querySelector('.played-view');
+    window.currentTimeMarker = document.querySelector('.currentTime-marker');
+    video.addEventListener('loadedmetadata', processSeekableSegments , false);
+    video.addEventListener('progress', processBufferedSegments , false);
+    video.addEventListener('timeupdate', processPlayedSegments , false);
     video.addEventListener('timeupdate', updateMarkerPosition , false);
     video.addEventListener('loadedmetadata', updateMarkerPosition , false);
+    seekableView.innerHTML = '';
+    bufferedView.innerHTML = '';
+    playedView.innerHTML = '';
 
-    function processBufferSegments() {
-        segmentsView.innerHTML = ''
+    function processSeekableSegments() {
+        seekableView.innerHTML = '';
         for (let i = 0; i < video.seekable.length; i++) {
             const segmentWidth = ((video.seekable.end(i) - video.seekable.start(i)) / video.duration) * 100;
             const segmentLeft = (video.seekable.start(i) / video.duration) * 100;
             const segmentEnd = roundFix(video.seekable.end(i));
-            segmentsView.innerHTML +=
+            seekableView.innerHTML +=
                 `<div class="segment seekable-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%"></div>`
         }
+    }
+
+    function processBufferedSegments() {
+        bufferedView.innerHTML = '';
         for (let i = 0; i < video.buffered.length; i++) {
             const segmentWidth = ((video.buffered.end(i) - video.buffered.start(i)) / video.duration) * 100;
             const segmentLeft = (video.buffered.start(i) / video.duration) * 100;
             const segmentEnd = roundFix(video.buffered.end(i));
-            segmentsView.innerHTML +=
+            bufferedView.innerHTML +=
                 `<div class="segment buffered-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%">${i}</div>`
         }
+    }
+
+    function processPlayedSegments() {
+        playedView.innerHTML = '';
         for (let i = 0; i < video.played.length; i++) {
             const segmentWidth = ((video.played.end(i) - video.played.start(i)) / video.duration) * 100;
             const segmentLeft = (video.played.start(i) / video.duration) * 100;
             const segmentEnd = roundFix(video.played.end(i));
-            segmentsView.innerHTML +=
+            playedView.innerHTML +=
                 `<div class="segment played-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%">${i}</div>`
         }
     }
 
     function updateMarkerPosition() {
         const position = (video.currentTime / video.duration) * 100;
-        bufferCurrentTimeMarker.style.left = position + '%';
-        bufferCurrentTimeMarker.setAttribute('currentTime-before', roundFix(video.currentTime));
+        currentTimeMarker.style.left = position + '%';
+        currentTimeMarker.setAttribute('currentTime-before', roundFix(video.currentTime));
     }
 
     function roundFix(num, toFixed = 2) {
@@ -237,6 +223,99 @@ function initBufferView() {
     }
 
 }
+
+////////////////////// INIT DATA FUNCTIONS //////////////////////
+
+/**
+ * Updates the data section and adds event listeners
+ */
+function initVideoData() {
+    initCurrentSrc();
+    initDuration();
+    initVideoFrames();
+    initReadyState();
+    initNetworkState();
+    initTextTracks();
+}
+
+function initCurrentSrc() {
+    document.getElementById('currentSrc-data').innerHTML = video.currentSrc;
+    document.getElementById('currentSrcInput').value = video.currentSrc;
+    video.addEventListener('loadedmetadata', () => {
+        document.getElementById('currentSrc-data').innerHTML = video.currentSrc;
+        document.getElementById('currentSrcInput').value = video.currentSrc;
+    });
+}
+
+function initDuration() {
+    document.getElementById('duration-data').innerHTML = video.duration;
+    document.getElementById('duration-info').innerHTML = video.duration;
+    video.addEventListener('loadedmetadata', () => {
+        document.getElementById('duration-data').innerHTML = video.duration;
+        document.getElementById('duration-info').innerHTML = video.duration;
+    });
+}
+
+function initVideoFrames() {
+    function updateVideoFramesData() {
+        document.getElementById('playbackQuality-total-info').innerHTML = video.getVideoPlaybackQuality().totalVideoFrames;
+        document.getElementById('playbackQuality-dropped-info').innerHTML = video.getVideoPlaybackQuality().droppedVideoFrames;
+        document.getElementById('playbackQuality-corrupted-info').innerHTML = video.getVideoPlaybackQuality().corruptedVideoFrames;
+        document.getElementById('getVideoPlaybackQuality-data').innerHTML = parseVideoPlaybackQuality(video.getVideoPlaybackQuality())
+
+        function parseVideoPlaybackQuality(data) {
+            return `totalVideoFrames: ${data.totalVideoFrames}, droppedVideoFrames: ${data.droppedVideoFrames}, corruptedVideoFrames: ${data.corruptedVideoFrames}`;
+        }
+    }
+    updateVideoFramesData();
+    video.addEventListener('timeupdate', () => {
+        updateVideoFramesData();
+    }, false);
+}
+
+function initReadyState() {
+    updateReadyStateFields();
+    video.addEventListener('loadedmetadata', updateReadyStateFields);
+    video.addEventListener('canplay', updateReadyStateFields);
+    video.addEventListener('canplaythrough', updateReadyStateFields);
+    video.addEventListener('stalled', updateReadyStateFields);
+    video.addEventListener('waiting', updateReadyStateFields);
+
+    function updateReadyStateFields() {
+        document.getElementById('readyState-data').innerHTML = video.readyState;
+        document.getElementById('readyState-info').innerHTML = READY_STATE_CODES[video.readyState];
+    }
+}
+
+function initNetworkState() {
+    updateNetworkStateFields();
+    video.addEventListener('loadedmetadata', updateNetworkStateFields);
+    video.addEventListener('canplay', updateNetworkStateFields);
+    video.addEventListener('canplaythrough', updateNetworkStateFields);
+    video.addEventListener('stalled', updateNetworkStateFields);
+    video.addEventListener('waiting', updateNetworkStateFields);
+
+    function updateNetworkStateFields() {
+        document.getElementById('networkState-data').innerHTML = video.networkState;
+        document.getElementById('networkState-info').innerHTML = NETWORK_STATE_CODES[video.networkState];
+    }
+}
+
+function initTextTracks() {
+    const parsedTracks = parseTextTracks(video.textTracks);
+    document.getElementById('textTracks-data').innerHTML = parsedTracks;
+    document.getElementById('textTracks-info').innerHTML = parsedTracks;
+
+    function parseTextTracks(tracksData = []) {
+        let res = ''
+        for (let i = 0; i < tracksData.length; i++) {
+            res += `<div>${i + 1}- ${tracksData[i].kind}, "${tracksData[i].label}", ${tracksData[i].language}</div>`
+        }
+        return res;
+    }
+}
+
+
 
 ////////////////////// INIT INPUT FUNCTIONS //////////////////////
 
