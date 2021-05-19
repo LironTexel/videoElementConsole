@@ -250,7 +250,7 @@ function initCurrentSrc() {
 function initDuration() {
     document.getElementById('duration-data').innerHTML = video.duration;
     document.getElementById('duration-info').innerHTML = video.duration;
-    video.addEventListener('loadedmetadata', () => {
+    video.addEventListener('durationchange', () => {
         document.getElementById('duration-data').innerHTML = video.duration;
         document.getElementById('duration-info').innerHTML = video.duration;
     });
