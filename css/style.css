@@ -1,0 +1,165 @@
+* {
+  box-sizing: border-box; }
+
+html, body, #app {
+  height: 100%;
+  width: 100%;
+  margin: 0; }
+
+#app {
+  padding: 5px;
+  flex-grow: 1;
+  background-color: #EEE;
+  display: grid;
+  grid-template-columns: minmax(50px, 150px) auto;
+  grid-template-rows: 75% auto auto;
+  row-gap: 5px;
+  column-gap: 5px;
+  font-family: Roboto, monospace;
+  grid-template: "main-logs-container video-container" 1fr "main-logs-container dashboard-container" 3fr / min-content 2fr; }
+  #app .grid-item {
+    border: 1px solid #BBB;
+    border-radius: 5px; }
+  #app .container {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 15px; }
+  #app .dashboard-container {
+    grid-area: dashboard-container;
+    height: 100%;
+    overflow: auto; }
+    #app .dashboard-container .controls-container {
+      display: flex;
+      flex-wrap: wrap; }
+      #app .dashboard-container .controls-container .input {
+        width: 14.25%;
+        padding: 10px;
+        border: 1px solid lightgrey;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        background: white;
+        height: 60px;
+        min-width: 160px;
+        min-height: 80px; }
+        #app .dashboard-container .controls-container .input.preload, #app .dashboard-container .controls-container .input.pause {
+          flex-direction: row; }
+        #app .dashboard-container .controls-container .input:hover > .tooltip {
+          display: block; }
+        #app .dashboard-container .controls-container .input .tooltip {
+          position: absolute;
+          margin: 5px;
+          padding: 5px;
+          border: 1px solid black;
+          display: none;
+          background: white;
+          z-index: 100;
+          top: 100%; }
+      #app .dashboard-container .controls-container .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px; }
+        #app .dashboard-container .controls-container .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0; }
+          #app .dashboard-container .controls-container .switch input:disabled + .slider {
+            background-color: #dedede; }
+          #app .dashboard-container .controls-container .switch input:checked + .slider {
+            background-color: #2d78f6; }
+            #app .dashboard-container .controls-container .switch input:checked + .slider:before {
+              -webkit-transform: translateX(26px);
+              -ms-transform: translateX(26px);
+              transform: translateX(26px); }
+          #app .dashboard-container .controls-container .switch input:hover + .slider {
+            box-shadow: 0 0 1px #015CC8; }
+        #app .dashboard-container .controls-container .switch .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          -webkit-transition: .4s;
+          transition: .4s; }
+          #app .dashboard-container .controls-container .switch .slider.round {
+            border-radius: 34px; }
+            #app .dashboard-container .controls-container .switch .slider.round:before {
+              border-radius: 50%; }
+          #app .dashboard-container .controls-container .switch .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s; }
+  #app .video-container {
+    grid-area: video-container;
+    overflow: auto;
+    resize: vertical;
+    height: 450px; }
+    #app .video-container .video-wrapper {
+      text-align: center; }
+  #app .main-logs-container {
+    grid-area: main-logs-container;
+    width: 100%;
+    min-width: 330px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.9);
+    height: 100%; }
+    #app .main-logs-container .log-binds {
+      height: 350px;
+      display: flex;
+      flex-wrap: wrap; }
+      #app .main-logs-container .log-binds .binds-title {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        margin-left: 10px;
+        align-items: center; }
+      #app .main-logs-container .log-binds div {
+        width: 50%; }
+      #app .main-logs-container .log-binds .event {
+        display: flex; }
+        #app .main-logs-container .log-binds .event > label {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          display: block; }
+        #app .main-logs-container .log-binds .event input:checked + label {
+          font-weight: 500; }
+    #app .main-logs-container .logs-container {
+      width: 100%;
+      height: calc(100% - 350px); }
+      #app .main-logs-container .logs-container .logs-title {
+        display: flex;
+        justify-content: space-between;
+        margin-left: 10px;
+        align-items: center; }
+      #app .main-logs-container .logs-container .logs {
+        width: 100%;
+        min-height: 50px;
+        overflow: auto;
+        height: calc(100% - 60px); }
+      #app .main-logs-container .logs-container .event {
+        padding: 5px 0; }
+    #app .main-logs-container .event.error {
+      color: #ff0000; }
+    #app .main-logs-container .event.play {
+      color: #276b38; }
+    #app .main-logs-container .event.pause {
+      color: #8c2424; }
+    #app .main-logs-container .event.timeupdate {
+      color: #2c5a9e; }
+    #app .main-logs-container .event.ended {
+      color: #561e87; }
+    #app .main-logs-container .event.volumechange {
+      color: #c74490; }
