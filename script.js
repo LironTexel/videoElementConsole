@@ -378,7 +378,7 @@ function initCurrentTimeInput() {
     document.getElementById('currentTime-data').innerHTML = video.currentTime;
     video.addEventListener('timeupdate', () => document.getElementById('currentTime-data').innerHTML = video.currentTime , false);
     video.addEventListener('timeupdate', () => document.querySelector('.currentTime-input').value = video.currentTime , false);
-    video.addEventListener('loadedmetadata', () => document.querySelector('.currentTime-input').setAttribute('max', video.duration), false);
+    video.addEventListener('durationchange', () => document.querySelector('.currentTime-input').setAttribute('max', video.duration), false);
     video.addEventListener('loadedmetadata', () => document.querySelector('.currentTime-input').setAttribute('value', '0'), false);
     video.addEventListener('loadedmetadata', () => document.querySelector('.currentTime-input').removeAttribute('disabled'), false);
     currentTimeInput.addEventListener('input', function(e) {
