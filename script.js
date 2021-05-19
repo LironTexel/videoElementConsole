@@ -131,22 +131,6 @@ function initVideoData() {
         document.getElementById('currentSrcInput').value = video.currentSrc;
     });
 
-    document.getElementById('src-data').innerHTML = video.src;
-    document.getElementById('srcInput').value = video.src;
-    srcInput.addEventListener('change', (e) => {
-        const src = e.target.value;
-        src ? video.src = e.target.value : video.removeAttribute('src');
-        video.load();
-        document.getElementById('src-data').innerHTML = video.src;
-    })
-
-    document.getElementById('poster-data').innerHTML = video.poster;
-    document.getElementById('posterInput').value = video.poster;
-    posterInput.addEventListener('change', (e) => {
-        video.poster = e.target.value;
-        document.getElementById('poster-data').innerHTML = video.poster;
-    })
-
     document.getElementById('duration-data').innerHTML = video.duration;
     document.getElementById('duration-info').innerHTML = video.duration;
     video.addEventListener('loadedmetadata', () => {
@@ -246,6 +230,8 @@ function initInputs() {
     initLoopInput();
     initControlsInput();
     initPreloadInput();
+    initPosterInput();
+    initSrcInput();
 }
 
 function initVolumeInput() {
@@ -401,4 +387,24 @@ function initPreloadInput() {
             document.getElementById('preload-data').innerHTML = video.preload;
         });
     });
+}
+
+function initPosterInput() {
+    document.getElementById('poster-data').innerHTML = video.poster;
+    document.getElementById('posterInput').value = video.poster;
+    posterInput.addEventListener('change', (e) => {
+        video.poster = e.target.value;
+        document.getElementById('poster-data').innerHTML = video.poster;
+    })
+}
+
+function initSrcInput() {
+    document.getElementById('src-data').innerHTML = video.src;
+    document.getElementById('srcInput').value = video.src;
+    srcInput.addEventListener('change', (e) => {
+        const src = e.target.value;
+        src ? video.src = e.target.value : video.removeAttribute('src');
+        video.load();
+        document.getElementById('src-data').innerHTML = video.src;
+    })
 }
