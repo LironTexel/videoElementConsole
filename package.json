@@ -5,12 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "scss": "node-sass --watch scss -o css"
+    "scss": "node-sass --watch scss -o css",
+    "start": "http-server"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@material-ui/core": "^4.11.4",
     "node-sass": "^6.0.0"
+  },
+  "devDependencies": {
+    "http-server": "^0.12.3"
   }
 }
