@@ -28,11 +28,11 @@ html, body, #app {
     grid-area: dashboard-container;
     height: 100%;
     overflow: auto; }
-    #app .dashboard-container .controls-container {
+    #app .dashboard-container .controls-container, #app .dashboard-container .data-container {
       display: flex;
       flex-wrap: wrap; }
-      #app .dashboard-container .controls-container .input {
-        width: calc(20% - 4px);
+      #app .dashboard-container .controls-container .input, #app .dashboard-container .data-container .input {
+        width: calc(16.6% - 4px);
         margin: 2px;
         padding: 10px;
         border: 1px solid lightgrey;
@@ -45,39 +45,45 @@ html, body, #app {
         height: 60px;
         min-width: 180px;
         min-height: 80px; }
-        #app .dashboard-container .controls-container .input.preload, #app .dashboard-container .controls-container .input.pause {
+        #app .dashboard-container .controls-container .input.wide, #app .dashboard-container .data-container .input.wide {
+          width: calc(41.5% - 4px); }
+        #app .dashboard-container .controls-container .input.preload, #app .dashboard-container .controls-container .input.pause, #app .dashboard-container .controls-container .input.currentSrc, #app .dashboard-container .controls-container .input.src, #app .dashboard-container .controls-container .input.poster, #app .dashboard-container .controls-container .input.getVideoPlaybackQuality, #app .dashboard-container .data-container .input.preload, #app .dashboard-container .data-container .input.pause, #app .dashboard-container .data-container .input.currentSrc, #app .dashboard-container .data-container .input.src, #app .dashboard-container .data-container .input.poster, #app .dashboard-container .data-container .input.getVideoPlaybackQuality {
           flex-direction: row; }
-        #app .dashboard-container .controls-container .input:hover > .tooltip {
+          #app .dashboard-container .controls-container .input.preload input[type="text"], #app .dashboard-container .controls-container .input.pause input[type="text"], #app .dashboard-container .controls-container .input.currentSrc input[type="text"], #app .dashboard-container .controls-container .input.src input[type="text"], #app .dashboard-container .controls-container .input.poster input[type="text"], #app .dashboard-container .controls-container .input.getVideoPlaybackQuality input[type="text"], #app .dashboard-container .data-container .input.preload input[type="text"], #app .dashboard-container .data-container .input.pause input[type="text"], #app .dashboard-container .data-container .input.currentSrc input[type="text"], #app .dashboard-container .data-container .input.src input[type="text"], #app .dashboard-container .data-container .input.poster input[type="text"], #app .dashboard-container .data-container .input.getVideoPlaybackQuality input[type="text"] {
+            width: 100%;
+            margin-left: 15px;
+            padding: 10px; }
+        #app .dashboard-container .controls-container .input:hover > .tooltip, #app .dashboard-container .data-container .input:hover > .tooltip {
           display: block; }
-        #app .dashboard-container .controls-container .input .tooltip {
+        #app .dashboard-container .controls-container .input .tooltip, #app .dashboard-container .data-container .input .tooltip {
           position: absolute;
           margin: 5px;
           padding: 5px;
           border: 1px solid black;
           display: none;
           background: white;
-          z-index: 100;
-          top: 100%; }
-      #app .dashboard-container .controls-container .switch {
+          z-index: 1000;
+          bottom: calc(100% - 5px); }
+      #app .dashboard-container .controls-container .switch, #app .dashboard-container .data-container .switch {
         position: relative;
         display: inline-block;
         width: 60px;
         height: 34px; }
-        #app .dashboard-container .controls-container .switch input {
+        #app .dashboard-container .controls-container .switch input, #app .dashboard-container .data-container .switch input {
           opacity: 0;
           width: 0;
           height: 0; }
-          #app .dashboard-container .controls-container .switch input:disabled + .slider {
+          #app .dashboard-container .controls-container .switch input:disabled + .slider, #app .dashboard-container .data-container .switch input:disabled + .slider {
             background-color: #dedede; }
-          #app .dashboard-container .controls-container .switch input:checked + .slider {
+          #app .dashboard-container .controls-container .switch input:checked + .slider, #app .dashboard-container .data-container .switch input:checked + .slider {
             background-color: #2d78f6; }
-            #app .dashboard-container .controls-container .switch input:checked + .slider:before {
+            #app .dashboard-container .controls-container .switch input:checked + .slider:before, #app .dashboard-container .data-container .switch input:checked + .slider:before {
               -webkit-transform: translateX(26px);
               -ms-transform: translateX(26px);
               transform: translateX(26px); }
-          #app .dashboard-container .controls-container .switch input:hover + .slider {
+          #app .dashboard-container .controls-container .switch input:hover + .slider, #app .dashboard-container .data-container .switch input:hover + .slider {
             box-shadow: 0 0 1px #015CC8; }
-        #app .dashboard-container .controls-container .switch .slider {
+        #app .dashboard-container .controls-container .switch .slider, #app .dashboard-container .data-container .switch .slider {
           position: absolute;
           cursor: pointer;
           top: 0;
@@ -87,11 +93,11 @@ html, body, #app {
           background-color: #ccc;
           -webkit-transition: .4s;
           transition: .4s; }
-          #app .dashboard-container .controls-container .switch .slider.round {
+          #app .dashboard-container .controls-container .switch .slider.round, #app .dashboard-container .data-container .switch .slider.round {
             border-radius: 34px; }
-            #app .dashboard-container .controls-container .switch .slider.round:before {
+            #app .dashboard-container .controls-container .switch .slider.round:before, #app .dashboard-container .data-container .switch .slider.round:before {
               border-radius: 50%; }
-          #app .dashboard-container .controls-container .switch .slider:before {
+          #app .dashboard-container .controls-container .switch .slider:before, #app .dashboard-container .data-container .switch .slider:before {
             position: absolute;
             content: "";
             height: 26px;

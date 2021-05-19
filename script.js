@@ -2,7 +2,13 @@
 
 const VIDEO_HEIGHT = 320;
 const VIDEO_WIDTH = 600;
-const VIDEO_POSTER = 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png'
+const VIDEO_POSTER = 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png';
+const MEDIA_ERROR_CODES = {
+    1: 'MEDIA_ERR_ABORTED',
+    2: 'MEDIA_ERR_NETWORK',
+    3: 'MEDIA_ERR_DECODE',
+    4: 'MEDIA_ERR_SRC_NOT_SUPPORTED',
+}
 const EVENTS_BINDS = {
     play: true,
     pause: true,
@@ -83,7 +89,7 @@ function bindVideoEvents() {
     video.addEventListener('durationchange', e => logsHandler(e, e.target.duration) , false);
     video.addEventListener('emptied', e => logsHandler(e) , false);
     video.addEventListener('ended', e => logsHandler(e, e.target.ended) , false);
-    video.addEventListener('error', e => logsHandler(e, e.target.error) , false);
+    video.addEventListener('error', e => logsHandler(e, MEDIA_ERROR_CODES[e.target.error.code]) , false);
     video.addEventListener('loadeddata', e => logsHandler(e) , false);
     video.addEventListener('loadedmetadata', e => logsHandler(e) , false);
     video.addEventListener('loadstart', e => logsHandler(e) , false);
@@ -119,16 +125,49 @@ function bindVideoEvents() {
  */
 function initVideoData() {
     document.getElementById('currentSrc-data').innerHTML = video.currentSrc;
+    document.getElementById('currentSrcInput').value = video.currentSrc;
+    video.addEventListener('loadedmetadata', () => {
+        document.getElementById('currentSrc-data').innerHTML = video.currentSrc;
+        document.getElementById('currentSrcInput').value = video.currentSrc;
+    });
+
+    document.getElementById('src-data').innerHTML = video.src;
+    document.getElementById('srcInput').value = video.src;
+    srcInput.addEventListener('change', (e) => {
+        const src = e.target.value;
+        src ? video.src = e.target.value : video.removeAttribute('src');
+        video.load();
+        document.getElementById('src-data').innerHTML = video.src;
+    })
+
     document.getElementById('poster-data').innerHTML = video.poster;
+    document.getElementById('posterInput').value = video.poster;
+    posterInput.addEventListener('change', (e) => {
+        video.poster = e.target.value;
+        document.getElementById('poster-data').innerHTML = video.poster;
+    })
 
     document.getElementById('duration-data').innerHTML = video.duration;
-    video.addEventListener('loadedmetadata', () => document.getElementById('duration-data').innerHTML = video.duration, false);
+    document.getElementById('duration-info').innerHTML = video.duration;
+    video.addEventListener('loadedmetadata', () => {
+        document.getElementById('duration-data').innerHTML = video.duration;
+        document.getElementById('duration-info').innerHTML = video.duration;
+    });
 
-    document.getElementById('playback-quality-data').innerHTML = parseVideoPlaybackQuality(video.getVideoPlaybackQuality())
-    video.addEventListener('timeupdate', () => document.getElementById('playback-quality-data').innerHTML = parseVideoPlaybackQuality(video.getVideoPlaybackQuality()) , false);
-    function parseVideoPlaybackQuality(data) {
-        return `totalVideoFrames: ${data.totalVideoFrames}, droppedVideoFrames: ${data.droppedVideoFrames}, corruptedVideoFrames: ${data.corruptedVideoFrames}`;
+    function updateVideoFramesData() {
+        document.getElementById('playbackQuality-total-info').innerHTML = video.getVideoPlaybackQuality().totalVideoFrames;
+        document.getElementById('playbackQuality-dropped-info').innerHTML = video.getVideoPlaybackQuality().droppedVideoFrames;
+        document.getElementById('playbackQuality-corrupted-info').innerHTML = video.getVideoPlaybackQuality().corruptedVideoFrames;
+        document.getElementById('getVideoPlaybackQuality-data').innerHTML = parseVideoPlaybackQuality(video.getVideoPlaybackQuality())
+
+        function parseVideoPlaybackQuality(data) {
+            return `totalVideoFrames: ${data.totalVideoFrames}, droppedVideoFrames: ${data.droppedVideoFrames}, corruptedVideoFrames: ${data.corruptedVideoFrames}`;
+        }
     }
+    updateVideoFramesData();
+    video.addEventListener('timeupdate', () => {
+        updateVideoFramesData();
+    }, false);
 }
 
 /**
@@ -163,6 +202,7 @@ function initBufferView() {
     window.bufferCurrentTimeMarker = document.querySelector('.currentTime-marker');
     video.addEventListener('progress', processBufferSegments , false);
     video.addEventListener('timeupdate', updateMarkerPosition , false);
+    video.addEventListener('loadedmetadata', updateMarkerPosition , false);
 
     function processBufferSegments() {
         bufferView.innerHTML = ''

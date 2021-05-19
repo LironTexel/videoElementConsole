@@ -51,12 +51,12 @@ html, body, #app {
     height: 100%;
     overflow: auto;
 
-    .controls-container {
+    .controls-container, .data-container {
       display: flex;
       flex-wrap: wrap;
 
       .input {
-        width: calc(20% - 4px);
+        width: calc(16.6% - 4px);
         margin: 2px;
         padding: 10px;
         border: 1px solid lightgrey;
@@ -70,8 +70,17 @@ html, body, #app {
         min-width: 180px;
         min-height: 80px;
 
-        &.preload, &.pause {
+        &.wide {
+          width: calc(41.5% - 4px);
+        }
+
+        &.preload, &.pause, &.currentSrc, &.src, &.poster, &.getVideoPlaybackQuality {
           flex-direction: row;
+          input[type="text"] {
+            width: 100%;
+            margin-left: 15px;
+            padding: 10px;
+          }
         }
 
         &:hover > .tooltip{
@@ -85,8 +94,8 @@ html, body, #app {
           border:1px solid black;
           display:none;
           background: white;
-          z-index: 100;
-          top: 100%;
+          z-index: 1000;
+          bottom: calc(100% - 5px);
         }
       }
 
@@ -152,8 +161,6 @@ html, body, #app {
         }
       }
     }
-
-    .metadata-container {}
 
     .buffer-container {
       display: flex;

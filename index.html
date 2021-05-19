@@ -147,12 +147,49 @@
                 </div>
             </div>
 
-            <div class="metadata-container">
-                <h4>Data</h4>
-                <div>video.currentSrc: <span id="currentSrc-data"></span></div>
-                <div>video.poster: <span id="poster-data"></span></div>
-                <div>video.getVideoPlaybackQuality(): <span id="playback-quality-data"></span></div>
-                <div>video.duration: <span id="duration-data"></span></div>
+            <h4>Data</h4>
+            <div class="data-container">
+                <div class="currentSrc input wide">
+                    <label for="currentSrcInput">currentSrc </label>
+                    <input id="currentSrcInput" type="text" disabled>
+                    <span class="tooltip">video.currentSrc: <span id="currentSrc-data"></span></span>
+                </div>
+
+                <div class="src input wide">
+                    <label for="srcInput">src </label>
+                    <input id="srcInput" type="text">
+                    <span class="tooltip">video.src: <span id="src-data"></span></span>
+                </div>
+
+                <div class="duration input">
+                    <label for="duration-info">duration</label><div id="duration-info"></div>
+                    <span class="tooltip">video.duration: <span id="duration-data"></span></span>
+                </div>
+
+                <div class="getVideoPlaybackQuality input wide">
+                    <label for="getVideoPlaybackQuality-info">getVideoPlaybackQuality</label>
+                    <div id="getVideoPlaybackQuality-info">
+                        <div>
+                            <label for="playbackQuality-total-info">Total frames: </label>
+                            <span id="playbackQuality-total-info"></span>
+                        </div>
+                        <div>
+                            <label for="playbackQuality-dropped-info">Dropped frames: </label>
+                            <span id="playbackQuality-dropped-info"></span>
+                        </div>
+                        <div>
+                            <label for="playbackQuality-corrupted-info">Corrupted frames: </label>
+                            <span id="playbackQuality-corrupted-info"></span>
+                        </div>
+                    </div>
+                    <span class="tooltip">video.getVideoPlaybackQuality(): <span id="getVideoPlaybackQuality-data"></span></span>
+                </div>
+
+                <div class="poster input wide">
+                    <label for="posterInput">poster </label>
+                    <input id="posterInput" type="text">
+                    <span class="tooltip">video.poster: <span id="poster-data"></span></span>
+                </div>
             </div>
         </div>
         <div class="main-logs-container container grid-item">
