@@ -166,7 +166,7 @@ function initClearLogsButton() {
  */
 function initSegmentsArea() {
     initMarkers();
-    initSrgmentViews();
+    initSegmentViews();
 
     function initMarkers() {
         initSuggestedTimeMarker();
@@ -210,7 +210,7 @@ function initSegmentsArea() {
         }
     };
 
-    function initSrgmentViews() {
+    function initSegmentViews() {
         window.seekableView = document.querySelector('.seekable-view');
         window.bufferedView = document.querySelector('.buffered-view');
         window.playedView = document.querySelector('.played-view');
