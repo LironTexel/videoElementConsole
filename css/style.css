@@ -115,7 +115,7 @@ html, body, #app {
       #app .dashboard-container .segments-container .buffered-tag {
         color: #2d78f6; }
       #app .dashboard-container .segments-container .played-tag {
-        color: #11ee11; }
+        color: #11dd11; }
       #app .dashboard-container .segments-container .segments-area {
         width: 100%;
         position: relative;
@@ -124,7 +124,7 @@ html, body, #app {
           background: #aa1111;
           width: 3px;
           position: absolute;
-          height: 20px;
+          height: 100%;
           z-index: 2;
           left: 0; }
           #app .dashboard-container .segments-container .segments-area .currentTime-marker::before {
@@ -132,25 +132,36 @@ html, body, #app {
             content: attr(currentTime-before);
             position: absolute;
             font-size: 10px;
-            top: 100%; }
+            top: 100%;
+            left: -15px; }
         #app .dashboard-container .segments-container .segments-area .segments-view {
           width: 100%;
-          height: 20px;
+          height: 30px;
           background: lightgrey;
           position: relative; }
           #app .dashboard-container .segments-container .segments-area .segments-view .segment {
             position: absolute;
             text-align: center;
-            height: 20px;
+            height: 100%;
             background: #2d78f6;
             color: white;
             border-right: 1px solid white; }
             #app .dashboard-container .segments-container .segments-area .segments-view .segment.buffered-segment {
               background: #2d78f6; }
+              #app .dashboard-container .segments-container .segments-area .segments-view .segment.buffered-segment::before {
+                color: #015CC8; }
             #app .dashboard-container .segments-container .segments-area .segments-view .segment.played-segment {
-              background: #11ee11; }
+              background: #11dd11;
+              height: 70%;
+              top: 30%; }
+              #app .dashboard-container .segments-container .segments-area .segments-view .segment.played-segment::before {
+                top: 0;
+                color: #115511; }
             #app .dashboard-container .segments-container .segments-area .segments-view .segment.seekable-segment {
               background: #444; }
+              #app .dashboard-container .segments-container .segments-area .segments-view .segment.seekable-segment::before {
+                top: 0;
+                color: white; }
             #app .dashboard-container .segments-container .segments-area .segments-view .segment::before {
               color: black;
               content: attr(end-before);
