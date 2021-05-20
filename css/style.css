@@ -20,6 +20,8 @@ html, body, #app {
   #app .grid-item {
     border: 1px solid #BBB;
     border-radius: 5px; }
+  #app .title {
+    margin: 5px 5px 10px; }
   #app .container {
     border: 1px solid black;
     border-radius: 5px;
