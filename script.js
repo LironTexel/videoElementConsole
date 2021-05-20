@@ -317,6 +317,7 @@ function initReadyState() {
     video.addEventListener('canplaythrough', updateReadyStateFields);
     video.addEventListener('stalled', updateReadyStateFields);
     video.addEventListener('waiting', updateReadyStateFields);
+    video.addEventListener('suspend', updateReadyStateFields);
 
     function updateReadyStateFields() {
         document.getElementById('readyState-data').innerHTML = video.readyState;
@@ -331,6 +332,7 @@ function initNetworkState() {
     video.addEventListener('canplaythrough', updateNetworkStateFields);
     video.addEventListener('stalled', updateNetworkStateFields);
     video.addEventListener('waiting', updateNetworkStateFields);
+    video.addEventListener('suspend', updateNetworkStateFields);
 
     function updateNetworkStateFields() {
         document.getElementById('networkState-data').innerHTML = video.networkState;
