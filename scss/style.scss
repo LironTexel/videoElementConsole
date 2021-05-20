@@ -187,29 +187,51 @@ html, body, #app {
         position: relative;
         margin: 10px 5px 15px;
 
-        .currentTime-marker {
-          background: $color-currentTime-marker;
+        .marker {
           width: 3px;
           position: absolute;
+          pointer-events: none;
           height: 100%;
           z-index: 2;
-          left: 0;
 
           &::before {
-            color: $color-currentTime-marker;
-            content: attr(currentTime-before);
             position: absolute;
             font-size: 10px;
             top: 100%;
             left: -15px;
           }
+
+          &.suggestedTime-marker {
+            width: 1px;
+            background: white;
+            display: none;
+            &.show {
+              display: block;
+            }
+            &::before {
+              color: black;
+              content: attr(suggestedTime-before);
+            }
+          }
+
+          &.currentTime-marker {
+            background: $color-currentTime-marker;
+            left: 0;
+
+            &::before {
+              color: $color-currentTime-marker;
+              content: attr(currentTime-before);
+            }
+          }
         }
+
 
         .segments-view {
           width: 100%;
           height: 30px;
           background: lightgrey;
           position: relative;
+          pointer-events: none;
           .segment {
             &.buffered-segment {
               background: $color-buffered;

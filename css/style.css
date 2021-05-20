@@ -120,25 +120,38 @@ html, body, #app {
         width: 100%;
         position: relative;
         margin: 10px 5px 15px; }
-        #app .dashboard-container .segments-container .segments-area .currentTime-marker {
-          background: #aa1111;
+        #app .dashboard-container .segments-container .segments-area .marker {
           width: 3px;
           position: absolute;
+          pointer-events: none;
           height: 100%;
-          z-index: 2;
-          left: 0; }
-          #app .dashboard-container .segments-container .segments-area .currentTime-marker::before {
-            color: #aa1111;
-            content: attr(currentTime-before);
+          z-index: 2; }
+          #app .dashboard-container .segments-container .segments-area .marker::before {
             position: absolute;
             font-size: 10px;
             top: 100%;
             left: -15px; }
+          #app .dashboard-container .segments-container .segments-area .marker.suggestedTime-marker {
+            width: 1px;
+            background: white;
+            display: none; }
+            #app .dashboard-container .segments-container .segments-area .marker.suggestedTime-marker.show {
+              display: block; }
+            #app .dashboard-container .segments-container .segments-area .marker.suggestedTime-marker::before {
+              color: black;
+              content: attr(suggestedTime-before); }
+          #app .dashboard-container .segments-container .segments-area .marker.currentTime-marker {
+            background: #aa1111;
+            left: 0; }
+            #app .dashboard-container .segments-container .segments-area .marker.currentTime-marker::before {
+              color: #aa1111;
+              content: attr(currentTime-before); }
         #app .dashboard-container .segments-container .segments-area .segments-view {
           width: 100%;
           height: 30px;
           background: lightgrey;
-          position: relative; }
+          position: relative;
+          pointer-events: none; }
           #app .dashboard-container .segments-container .segments-area .segments-view .segment {
             position: absolute;
             text-align: center;

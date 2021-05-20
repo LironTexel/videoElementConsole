@@ -66,7 +66,7 @@ bindVideoEvents();
 
 initSelectAllButton();
 initClearLogsButton();
-initSegmentsView();
+initSegmentsArea();
 
 initVideoData();
 initInputs();
@@ -162,66 +162,103 @@ function initClearLogsButton() {
 }
 
 /**
- * Initialise segments view
+ * Initialise segments area
  */
-function initSegmentsView() {
-    window.segmentsView = document.querySelector('.segments-view');
-    window.seekableView = document.querySelector('.seekable-view');
-    window.bufferedView = document.querySelector('.buffered-view');
-    window.playedView = document.querySelector('.played-view');
-    window.currentTimeMarker = document.querySelector('.currentTime-marker');
-    video.addEventListener('loadedmetadata', processSeekableSegments , false);
-    video.addEventListener('progress', processBufferedSegments , false);
-    video.addEventListener('timeupdate', processPlayedSegments , false);
-    video.addEventListener('timeupdate', updateMarkerPosition , false);
-    video.addEventListener('loadedmetadata', updateMarkerPosition , false);
-    seekableView.innerHTML = '';
-    bufferedView.innerHTML = '';
-    playedView.innerHTML = '';
+function initSegmentsArea() {
+    initMarkers();
+    initSrgmentViews();
 
-    function processSeekableSegments() {
+    function initMarkers() {
+        initSuggestedTimeMarker();
+        initCurrentTimeMarker();
+
+        function initCurrentTimeMarker(){
+            window.currentTimeMarker = document.querySelector('.currentTime-marker');
+            video.addEventListener('timeupdate', updateCurrentTimeMarkerPosition , false);
+            video.addEventListener('loadedmetadata', updateCurrentTimeMarkerPosition , false);
+        }
+
+        function initSuggestedTimeMarker() {
+            window.segmentsArea = document.querySelector('.segments-area');
+            window.suggestedTimeMarker = document.querySelector('.suggestedTime-marker');
+            segmentsArea.addEventListener("mousemove", e => {
+                if (video.duration) {
+                    suggestedTimeMarker.style.left = e.offsetX + 'px';
+                    const suggestedTime = (e.offsetX / segmentsArea.offsetWidth) * video.duration;
+                    suggestedTimeMarker.setAttribute('suggestedTime-before', roundFix(suggestedTime));
+                    suggestedTimeMarker.classList.add("show");
+                }
+            }, false);
+
+            segmentsArea.addEventListener("mouseleave", () => {
+                suggestedTimeMarker.classList.remove("show");
+            }, false);
+
+            segmentsArea.addEventListener("click", e => {
+                if(video.duration) {
+                    const suggestedTime = (e.offsetX / segmentsArea.offsetWidth) * video.duration;
+                    video.currentTime = suggestedTime;
+                    updateCurrentTimeMarkerPosition();
+                }
+            }, false);
+        }
+
+        function updateCurrentTimeMarkerPosition() {
+            const position = (video.currentTime / video.duration) * 100;
+            currentTimeMarker.style.left = position + '%';
+            currentTimeMarker.setAttribute('currentTime-before', roundFix(video.currentTime));
+        }
+    };
+
+    function initSrgmentViews() {
+        window.seekableView = document.querySelector('.seekable-view');
+        window.bufferedView = document.querySelector('.buffered-view');
+        window.playedView = document.querySelector('.played-view');
+        video.addEventListener('loadedmetadata', processSeekableSegments , false);
+        video.addEventListener('progress', processBufferedSegments , false);
+        video.addEventListener('timeupdate', processPlayedSegments , false);
+
         seekableView.innerHTML = '';
-        for (let i = 0; i < video.seekable.length; i++) {
-            const segmentWidth = ((video.seekable.end(i) - video.seekable.start(i)) / video.duration) * 100;
-            const segmentLeft = (video.seekable.start(i) / video.duration) * 100;
-            const segmentEnd = roundFix(video.seekable.end(i));
-            seekableView.innerHTML +=
-                `<div class="segment seekable-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%"></div>`
-        }
-    }
-
-    function processBufferedSegments() {
         bufferedView.innerHTML = '';
-        for (let i = 0; i < video.buffered.length; i++) {
-            const segmentWidth = ((video.buffered.end(i) - video.buffered.start(i)) / video.duration) * 100;
-            const segmentLeft = (video.buffered.start(i) / video.duration) * 100;
-            const segmentEnd = roundFix(video.buffered.end(i));
-            bufferedView.innerHTML +=
-                `<div class="segment buffered-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%">${i}</div>`
-        }
-    }
-
-    function processPlayedSegments() {
         playedView.innerHTML = '';
-        for (let i = 0; i < video.played.length; i++) {
-            const segmentWidth = ((video.played.end(i) - video.played.start(i)) / video.duration) * 100;
-            const segmentLeft = (video.played.start(i) / video.duration) * 100;
-            const segmentEnd = roundFix(video.played.end(i));
-            playedView.innerHTML +=
-                `<div class="segment played-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%">${i}</div>`
-        }
-    }
 
-    function updateMarkerPosition() {
-        const position = (video.currentTime / video.duration) * 100;
-        currentTimeMarker.style.left = position + '%';
-        currentTimeMarker.setAttribute('currentTime-before', roundFix(video.currentTime));
+        function processSeekableSegments() {
+            seekableView.innerHTML = '';
+            for (let i = 0; i < video.seekable.length; i++) {
+                const segmentWidth = ((video.seekable.end(i) - video.seekable.start(i)) / video.duration) * 100;
+                const segmentLeft = (video.seekable.start(i) / video.duration) * 100;
+                const segmentEnd = roundFix(video.seekable.end(i));
+                seekableView.innerHTML +=
+                    `<div class="segment seekable-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%"></div>`
+            }
+        }
+
+        function processBufferedSegments() {
+            bufferedView.innerHTML = '';
+            for (let i = 0; i < video.buffered.length; i++) {
+                const segmentWidth = ((video.buffered.end(i) - video.buffered.start(i)) / video.duration) * 100;
+                const segmentLeft = (video.buffered.start(i) / video.duration) * 100;
+                const segmentEnd = roundFix(video.buffered.end(i));
+                bufferedView.innerHTML +=
+                    `<div class="segment buffered-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%">${i}</div>`
+            }
+        }
+
+        function processPlayedSegments() {
+            playedView.innerHTML = '';
+            for (let i = 0; i < video.played.length; i++) {
+                const segmentWidth = ((video.played.end(i) - video.played.start(i)) / video.duration) * 100;
+                const segmentLeft = (video.played.start(i) / video.duration) * 100;
+                const segmentEnd = roundFix(video.played.end(i));
+                playedView.innerHTML +=
+                    `<div class="segment played-segment segment-${i}" end-before=${segmentEnd} style="width: ${segmentWidth}%; left: ${segmentLeft}%">${i}</div>`
+            }
+        }
     }
 
     function roundFix(num, toFixed = 2) {
         return parseFloat(num).toFixed(toFixed);
     }
-
 }
 
 ////////////////////// INIT DATA FUNCTIONS //////////////////////
@@ -314,8 +351,6 @@ function initTextTracks() {
         return res;
     }
 }
-
-
 
 ////////////////////// INIT INPUT FUNCTIONS //////////////////////
 
