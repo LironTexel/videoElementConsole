@@ -50,6 +50,10 @@ const EVENTS_BINDS = {
     onleavepictureinpicture: true,
     onfullscreenchange: true,
     oncontextmenu: true,
+};
+const INPUTS = {
+    playPause: null,
+    volume: null,
 }
 
 ////////////////////// INIT VIDEO //////////////////////
@@ -70,6 +74,104 @@ initSegmentsArea();
 
 initVideoData();
 initInputs();
+
+initToolbar();
+initAutomationButtons();
+
+////////////////////// INIT SDK and HLS //////////////////////
+
+const videoSrc = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+window.lead = document.querySelector('.lead');
+window.statsData = document.querySelector('.stats-data');
+
+if (Hls.isSupported()) {
+    const hls = new Hls();
+    // hls.config.autoStartLoad = false;
+    hls.loadSource(videoSrc);
+    hls.attachMedia(video);
+    window.sdk = new SDK(hls, true);
+
+    const leadHls = new Hls();
+    window.leadHls = leadHls;
+    leadHls.config.autoStartLoad = false;
+    // leadHls.loadSource(videoSrc);
+    leadHls.attachMedia(lead);
+    leadHls.on(Hls.Events.MEDIA_ATTACHED, function () {
+        console.log('video and hls.js are now bound together !');
+        leadHls.loadSource(videoSrc);
+        // leadHls.startLoad(400);
+        leadHls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+            leadHls.startLoad(400);
+            // console.log(
+            //     'manifest loaded, found ' + data.levels.length + ' quality level'
+            // );
+        });
+    });
+    lead.addEventListener('play', e => {
+        sdk.sync(true, Date.now(), parseFloat(window.lead.currentTime));
+    })
+    lead.addEventListener('timeupdate', () => {
+        const diff = roundFix(video.currentTime - lead.currentTime, 3);
+        statsData.innerHTML = roundFix(diff + '');
+        Math.abs(diff) > 0.15 ? statsData.classList.add('not-synced') : statsData.classList.remove('not-synced');
+
+    })
+    lead.addEventListener('pause', e => {
+        sdk.sync(false, Date.now(), parseFloat(window.lead.currentTime));
+    })
+}
+
+
+////////////////////// INIT TOOLBAR FUNCTIONS //////////////////////
+
+
+
+function initToolbar() {
+    window.configurationButton = document.querySelector('.configuration-button');
+    window.configurationContainer = document.querySelector('.configuration-modal-container');
+    window.configurationCloseButton = document.querySelector('.configuration-close-button');
+
+    const toggleHide = () => { configurationContainer.classList.toggle('hide') };
+    configurationButton.addEventListener('click', toggleHide)
+    configurationCloseButton.addEventListener('click', toggleHide)
+}
+
+
+////////////////////// INIT AUTOMATION FUNCTIONS //////////////////////
+
+function initAutomationButtons() {
+    window.positionInput = document.getElementById('positionInput');
+    window.positionInputRange = document.getElementById('positionInputRange');
+    window.positionInput.addEventListener('input', function(e) {
+        if(window.positionInputRange.value !== window.positionInput.value) {
+            window.positionInputRange.value = window.positionInput.value;
+        }
+    }, false);
+    window.positionInputRange.addEventListener('input', function(e) {
+        if(window.positionInputRange.value !== window.positionInput.value) {
+            window.positionInput.value = window.positionInputRange.value;
+        }
+    }, false);
+    video.addEventListener('durationchange', () => {
+        window.positionInput.setAttribute('max', video.duration);
+        window.positionInputRange.setAttribute('max', video.duration);
+        window.positionInputRange.removeAttribute('disabled');
+    } , false);
+    window.playFromButton = document.querySelector('.play-from-button');
+    playFromButton.addEventListener('click', () => {
+        // video.currentTime = window.positionInput.value;
+        // video.play()
+        sdk.sync(true, Date.now(), parseFloat(window.positionInput.value));
+    });
+    window.pauseOnButton = document.querySelector('.pause-on-button');
+    pauseOnButton.addEventListener('click', () => {
+        // video.currentTime = window.positionInput.value;
+        // video.pause()
+        sdk.sync(false, Date.now(), parseFloat(window.positionInput.value));
+    });
+    window.seekToButton = document.querySelector('.seek-to-button');
+    seekToButton.addEventListener('click', () => video.currentTime = window.positionInput.value);
+}
 
 ////////////////////// INIT LOG FUNCTIONS //////////////////////
 
@@ -255,10 +357,10 @@ function initSegmentsArea() {
             }
         }
     }
+}
 
-    function roundFix(num, toFixed = 2) {
-        return parseFloat(num).toFixed(toFixed);
-    }
+function roundFix(num, toFixed = 2) {
+    return parseFloat(num).toFixed(toFixed);
 }
 
 ////////////////////// INIT DATA FUNCTIONS //////////////////////

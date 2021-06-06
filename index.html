@@ -7,233 +7,268 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
     <title>Video element console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="SDK.js"></script>
 </head>
 <body>
     <div id="app">
-        <div class="video-container container grid-item">
-            <div class="video-wrapper">
-                <video class="player" preload="none" controls="controls">
-<!--                    short video -->
-<!--                    <source src=http://techslides.com/demos/sample-videos/small.webm type=video/webm>-->
-<!--                    <source src=http://techslides.com/demos/sample-videos/small.ogv type=video/ogg>-->
-<!--                    <source src=http://techslides.com/demos/sample-videos/small.mp4 type=video/mp4>-->
-<!--                    <source src=http://techslides.com/demos/sample-videos/small.3gp type=video/3gp>-->
-
-<!--                    long video -->
-                    <source src="https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4" type="video/mp4">
-                    <source src="https://archive.org/download/ElephantsDream/ed_hd.ogv" type="video/ogg">
-                    <source src="https://archive.org/download/ElephantsDream/ed_hd.avi" type="video/avi">
-                    <track kind="subtitles" label="english subtitles" src="subtitles/english.vtt" srclang="en">
-                    <track kind="subtitles" label="french subtitles" src="subtitles/french.vtt" srclang="fr">
-                    Your browser doesn't support HTML5 video tag.
-                </video>
+        <div class="toolbar">
+            <button class="configuration-button"><i class="fa fa-cog"></i></button>
+            <div class="configuration-modal-container hide">
+                <div class="configuration-modal">
+                    <button class="configuration-close-button"><i class="fa fa-close"></i></button>
+                </div>
             </div>
         </div>
-        <div class="dashboard-container container grid-item">
-            <div class="segments-container">
-                <div><span class="seekable-tag">Seekable</span>/<span class="buffered-tag">Buffered</span>/<span class="played-tag">Played</span>:</div>
-                <div class="segments-area">
-                    <div class="currentTime-marker marker"></div>
-                    <div class="suggestedTime-marker marker"></div>
-                    <div class="segments-view">
-                        <div class="seekable-view"></div>
-                        <div class="buffered-view"></div>
-                        <div class="played-view"></div>
+        <div id="console">
+            <div class="video-container container grid-item">
+                <div class="video-wrapper">
+                    <video class="lead" controls="controls"></video>
+                    <div class="stats">
+                        Diff:
+                        <span class="stats-data"></span>
                     </div>
+                    <video class="player" preload="none" controls="controls">
+    <!--                    short video -->
+    <!--                    <source src=http://techslides.com/demos/sample-videos/small.webm type=video/webm>-->
+    <!--                    <source src=http://techslides.com/demos/sample-videos/small.ogv type=video/ogg>-->
+    <!--                    <source src=http://techslides.com/demos/sample-videos/small.mp4 type=video/mp4>-->
+    <!--                    <source src=http://techslides.com/demos/sample-videos/small.3gp type=video/3gp>-->
+
+    <!--                    long video -->
+                        <source src="https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4" type="video/mp4">
+                        <source src="https://archive.org/download/ElephantsDream/ed_hd.ogv" type="video/ogg">
+                        <source src="https://archive.org/download/ElephantsDream/ed_hd.avi" type="video/avi">
+                        <track kind="subtitles" label="english subtitles" src="subtitles/english.vtt" srclang="en">
+                        <track kind="subtitles" label="french subtitles" src="subtitles/french.vtt" srclang="fr">
+                        Your browser doesn't support HTML5 video tag.
+                    </video>
                 </div>
             </div>
-
-            <h4 class="title">Mutable props</h4>
-            <div class="controls-container">
-                <div class="pause input">
-                    <button class="play-button">Play</button>
-                    <button class="pause-button">Pause</button>
-                    <div class="tooltip">video.paused: <span id="paused-data"></span></div>
-                </div>
-
-                <div class="volume input">
-                    <label for="volumeInput">volume</label>
-                    <input id="volumeInput" class="volume-input" type="range" min="0" max="1" step="0.01">
-                    <span class="tooltip">video.volume: <span id="volume-data"></span></span>
-                </div>
-
-                <div class="width input">
-                    <label for="widthInput">width</label>
-                    <input id="widthInput" class="width-input" type="range" min="100" max="900" step="10">
-                    <span class="tooltip">video.width: <span id="width-data"></span></span>
-                </div>
-
-                <div class="height input">
-                    <label for="heightInput">height</label>
-                    <input id="heightInput" class="height-input" type="range" min="100" max="500" step="10">
-                    <span class="tooltip">video.height: <span id="height-data"></span></span>
-                </div>
-
-                <div class="currentTime input">
-                    <label for="currentTimeInput">current time</label>
-                    <input id="currentTimeInput" class="currentTime-input" type="range" min="0" step="0.1" disabled>
-                    <span class="tooltip">video.currentTime: <span id="currentTime-data"></span></span>
-                </div>
-
-                <div class="playbackRate input">
-                    <label for="playbackRateInput">playback rate</label>
-                    <input id="playbackRateInput" class="playbackRate-input" type="range" min="0" max="5" step="0.1">
-                    <span class="tooltip">video.playbackRate: <span id="playbackRate-data"></span></span>
-                </div>
-
-                <div class="autoplay input">
-                    autoplay
-                    <label class="switch">
-                        <input class="autoplay-input" type="checkbox">
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="tooltip">video.autoplay: <span id="autoplay-data"></span></span>
-                </div>
-
-                <div class="muted input">
-                    muted
-                    <label class="switch">
-                        <input class="muted-input" type="checkbox">
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="tooltip">video.muted: <span id="muted-data"></span></span>
-                </div>
-
-                <div class="loop input">
-                    loop
-                    <label class="switch">
-                        <input class="loop-input" type="checkbox">
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="tooltip">video.loop: <span id="loop-data"></span></span>
-                </div>
-
-                <div class="pictureInPicture input">
-                    pictureInPicture
-                    <label class="switch">
-                        <input class="pictureInPicture-input" type="checkbox" disabled>
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="tooltip">document.pictureInPictureElement: <span id="pictureInPicture-data"></span></span>
-                </div>
-
-                <div class="fullScreen input">
-                    fullScreen
-                    <label class="switch">
-                        <input class="fullScreen-input" type="checkbox">
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="tooltip">document.fullscreenElement: <span id="fullScreen-data"></span></span>
-                </div>
-
-                <div class="controls input">
-                    controls
-                    <label class="switch">
-                        <input class="controls-input" type="checkbox" checked>
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="tooltip">video.controls: <span id="controls-data"></span></span>
-                </div>
-
-                <div class="preload input">
-                    <span>Preload</span>
-                    <span class="tooltip">video.preload: <span id="preload-data"></span></span>
-                    <div>
-                        <div>
-                            <input type="radio" id="none" name="preload" value="none">
-                            <label for="none">None</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="metadata" name="preload" value="metadata">
-                            <label for="metadata">Metadata</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="auto" name="preload" value="auto">
-                            <label for="auto">Auto</label>
+            <div class="dashboard-container container grid-item">
+                <div class="segments-container">
+                    <div><span class="seekable-tag">Seekable</span>/<span class="buffered-tag">Buffered</span>/<span class="played-tag">Played</span>:</div>
+                    <div class="segments-area">
+                        <div class="currentTime-marker marker"></div>
+                        <div class="suggestedTime-marker marker"></div>
+                        <div class="segments-view">
+                            <div class="seekable-view"></div>
+                            <div class="buffered-view"></div>
+                            <div class="played-view"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="poster input wide">
-                    <label for="posterInput">poster </label>
-                    <input id="posterInput" type="text">
-                    <span class="tooltip">video.poster: <span id="poster-data"></span></span>
+                <h4 class="title">Automation Actions</h4>
+                <div class="controls-container">
+                    <div class="pause input">
+                        <button class="play-from-button">Play From Position</button>
+                    </div>
+                    <div class="pause input">
+                        <button class="pause-on-button">Pause On Position</button>
+                    </div>
+                    <div class="pause input">
+                        <button class="seek-to-button">Seek To Position</button>
+                    </div>
+                    <div class="input">
+                        Position: <input id="positionInput" type="number" min="0" max="0" value="0" />
+                        <input id="positionInputRange" class="position-input" type="range" min="0" step="0.1" disabled value="0" />
+                    </div>
                 </div>
 
-                <div class="src input wide">
-                    <label for="srcInput">src </label>
-                    <input id="srcInput" type="text">
-                    <span class="tooltip">video.src: <span id="src-data"></span></span>
-                </div>
+                <h4 class="title">Mutable props</h4>
+                <div class="controls-container">
+                    <div class="pause input">
+                        <button class="play-button">Play</button>
+                        <button class="pause-button">Pause</button>
+                        <div class="tooltip">video.paused: <span id="paused-data"></span></div>
+                    </div>
 
-            </div>
+                    <div class="volume input">
+                        <label for="volumeInput">volume</label>
+                        <input id="volumeInput" class="volume-input" type="range" min="0" max="1" step="0.01">
+                        <span class="tooltip">video.volume: <span id="volume-data"></span></span>
+                    </div>
 
-            <h4 class="title">Read-only props</h4>
-            <div class="data-container">
-                <div class="currentSrc input wide">
-                    <label for="currentSrcInput">currentSrc </label>
-                    <input id="currentSrcInput" type="text" disabled>
-                    <span class="tooltip">video.currentSrc: <span id="currentSrc-data"></span></span>
-                </div>
+                    <div class="width input">
+                        <label for="widthInput">width</label>
+                        <input id="widthInput" class="width-input" type="range" min="100" max="900" step="10">
+                        <span class="tooltip">video.width: <span id="width-data"></span></span>
+                    </div>
 
-                <div class="duration input">
-                    <label for="duration-info">duration</label><div id="duration-info"></div>
-                    <span class="tooltip">video.duration: <span id="duration-data"></span></span>
-                </div>
+                    <div class="height input">
+                        <label for="heightInput">height</label>
+                        <input id="heightInput" class="height-input" type="range" min="100" max="500" step="10">
+                        <span class="tooltip">video.height: <span id="height-data"></span></span>
+                    </div>
 
-                <div class="getVideoPlaybackQuality input wide">
-                    <label for="getVideoPlaybackQuality-info">getVideoPlaybackQuality</label>
-                    <div id="getVideoPlaybackQuality-info">
+                    <div class="currentTime input">
+                        <label for="currentTimeInput">current time</label>
+                        <input id="currentTimeInput" class="currentTime-input" type="range" min="0" step="0.1" disabled>
+                        <span class="tooltip">video.currentTime: <span id="currentTime-data"></span></span>
+                    </div>
+
+                    <div class="playbackRate input">
+                        <label for="playbackRateInput">playback rate</label>
+                        <input id="playbackRateInput" class="playbackRate-input" type="range" min="0" max="5" step="0.1">
+                        <span class="tooltip">video.playbackRate: <span id="playbackRate-data"></span></span>
+                    </div>
+
+                    <div class="autoplay input">
+                        autoplay
+                        <label class="switch">
+                            <input class="autoplay-input" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="tooltip">video.autoplay: <span id="autoplay-data"></span></span>
+                    </div>
+
+                    <div class="muted input">
+                        muted
+                        <label class="switch">
+                            <input class="muted-input" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="tooltip">video.muted: <span id="muted-data"></span></span>
+                    </div>
+
+                    <div class="loop input">
+                        loop
+                        <label class="switch">
+                            <input class="loop-input" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="tooltip">video.loop: <span id="loop-data"></span></span>
+                    </div>
+
+                    <div class="pictureInPicture input">
+                        pictureInPicture
+                        <label class="switch">
+                            <input class="pictureInPicture-input" type="checkbox" disabled>
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="tooltip">document.pictureInPictureElement: <span id="pictureInPicture-data"></span></span>
+                    </div>
+
+                    <div class="fullScreen input">
+                        fullScreen
+                        <label class="switch">
+                            <input class="fullScreen-input" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="tooltip">document.fullscreenElement: <span id="fullScreen-data"></span></span>
+                    </div>
+
+                    <div class="controls input">
+                        controls
+                        <label class="switch">
+                            <input class="controls-input" type="checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="tooltip">video.controls: <span id="controls-data"></span></span>
+                    </div>
+
+                    <div class="preload input">
+                        <span>Preload</span>
+                        <span class="tooltip">video.preload: <span id="preload-data"></span></span>
                         <div>
-                            <label for="playbackQuality-total-info">Total frames: </label>
-                            <span id="playbackQuality-total-info"></span>
-                        </div>
-                        <div>
-                            <label for="playbackQuality-dropped-info">Dropped frames: </label>
-                            <span id="playbackQuality-dropped-info"></span>
-                        </div>
-                        <div>
-                            <label for="playbackQuality-corrupted-info">Corrupted frames: </label>
-                            <span id="playbackQuality-corrupted-info"></span>
+                            <div>
+                                <input type="radio" id="none" name="preload" value="none">
+                                <label for="none">None</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="metadata" name="preload" value="metadata">
+                                <label for="metadata">Metadata</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="auto" name="preload" value="auto">
+                                <label for="auto">Auto</label>
+                            </div>
                         </div>
                     </div>
-                    <span class="tooltip">video.getVideoPlaybackQuality(): <span id="getVideoPlaybackQuality-data"></span></span>
+
+                    <div class="poster input wide">
+                        <label for="posterInput">poster </label>
+                        <input id="posterInput" type="text">
+                        <span class="tooltip">video.poster: <span id="poster-data"></span></span>
+                    </div>
+
+                    <div class="src input wide">
+                        <label for="srcInput">src </label>
+                        <input id="srcInput" type="text">
+                        <span class="tooltip">video.src: <span id="src-data"></span></span>
+                    </div>
+
                 </div>
 
-                <div class="readyState input">
-                    <label for="readyState-info">readyState</label><div id="readyState-info"></div>
-                    <span class="tooltip">video.readyState: <span id="readyState-data"></span></span>
-                </div>
+                <h4 class="title">Read-only props</h4>
+                <div class="data-container">
+                    <div class="currentSrc input wide">
+                        <label for="currentSrcInput">currentSrc </label>
+                        <input id="currentSrcInput" type="text" disabled>
+                        <span class="tooltip">video.currentSrc: <span id="currentSrc-data"></span></span>
+                    </div>
 
-                <div class="networkState input">
-                    <label for="networkState-info">networkState</label><div id="networkState-info"></div>
-                    <span class="tooltip">video.networkState: <span id="networkState-data"></span></span>
-                </div>
+                    <div class="duration input">
+                        <label for="duration-info">duration</label><div id="duration-info"></div>
+                        <span class="tooltip">video.duration: <span id="duration-data"></span></span>
+                    </div>
 
-                <div class="textTracks input wide">
-                    <label for="textTracks-info">textTracks</label><div id="textTracks-info"></div>
-                    <span class="tooltip">video.textTracks: <span id="textTracks-data"></span></span>
-                </div>
+                    <div class="getVideoPlaybackQuality input wide">
+                        <label for="getVideoPlaybackQuality-info">getVideoPlaybackQuality</label>
+                        <div id="getVideoPlaybackQuality-info">
+                            <div>
+                                <label for="playbackQuality-total-info">Total frames: </label>
+                                <span id="playbackQuality-total-info"></span>
+                            </div>
+                            <div>
+                                <label for="playbackQuality-dropped-info">Dropped frames: </label>
+                                <span id="playbackQuality-dropped-info"></span>
+                            </div>
+                            <div>
+                                <label for="playbackQuality-corrupted-info">Corrupted frames: </label>
+                                <span id="playbackQuality-corrupted-info"></span>
+                            </div>
+                        </div>
+                        <span class="tooltip">video.getVideoPlaybackQuality(): <span id="getVideoPlaybackQuality-data"></span></span>
+                    </div>
 
+                    <div class="readyState input">
+                        <label for="readyState-info">readyState</label><div id="readyState-info"></div>
+                        <span class="tooltip">video.readyState: <span id="readyState-data"></span></span>
+                    </div>
+
+                    <div class="networkState input">
+                        <label for="networkState-info">networkState</label><div id="networkState-info"></div>
+                        <span class="tooltip">video.networkState: <span id="networkState-data"></span></span>
+                    </div>
+
+                    <div class="textTracks input wide">
+                        <label for="textTracks-info">textTracks</label><div id="textTracks-info"></div>
+                        <span class="tooltip">video.textTracks: <span id="textTracks-data"></span></span>
+                    </div>
+
+                </div>
             </div>
-        </div>
-        <div class="main-logs-container container grid-item">
-            <div class="log-binds">
-                <div class="binds-title">
-                    <h3>Binds: </h3>
-                    <button class="binds-select-all-button">Deselect all</button>
+            <div class="main-logs-container container grid-item">
+                <div class="log-binds">
+                    <div class="binds-title">
+                        <h3>Binds: </h3>
+                        <button class="binds-select-all-button">Deselect all</button>
+                    </div>
                 </div>
-            </div>
-            <div class="logs-container">
-                <div class="logs-title">
-                    <h3>Logs: </h3>
-                    <button class="logs-clear-button">Clear logs</button>
+                <div class="logs-container">
+                    <div class="logs-title">
+                        <h3>Logs: </h3>
+                        <button class="logs-clear-button">Clear logs</button>
+                    </div>
+                    <div class="logs container"></div>
                 </div>
-                <div class="logs container"></div>
             </div>
         </div>
     </div>
+    <script src="script.js"></script>
 </body>
-<script src="script.js"></script>
 </html>

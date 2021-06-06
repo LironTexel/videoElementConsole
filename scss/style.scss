@@ -16,6 +16,8 @@ $color-played-text: #115511;
 $color-seekable: #444;
 $color-currentTime-marker: #aa1111;
 
+$toolbar-height: 40px;
+
 * {
   box-sizing: border-box;
 }
@@ -26,7 +28,36 @@ html, body, #app {
   margin: 0;
 }
 
-#app {
+.toolbar {
+  height: $toolbar-height;
+  text-align: right;
+  .configuration-button {
+    padding: 10px;
+  }
+  .configuration-modal-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.3);
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .configuration-modal {
+      width: 50%;
+      height: 50%;
+      background: white;
+    }
+  }
+
+  .hide {
+    display: none;
+  }
+}
+
+#console {
+  height: calc(100% - #{$toolbar-height});
   padding: 5px;
   flex-grow : 1;
   background-color: #EEE;
@@ -288,6 +319,16 @@ html, body, #app {
     height: 350px;
     .video-wrapper {
       text-align: center;
+      .lead {
+        width: 330px;
+        height: 180px;
+      }
+    }
+
+    .stats-data {
+      &.not-synced {
+        color: red
+      }
     }
   }
 

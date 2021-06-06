@@ -6,7 +6,30 @@ html, body, #app {
   width: 100%;
   margin: 0; }
 
-#app {
+.toolbar {
+  height: 40px;
+  text-align: right; }
+  .toolbar .configuration-button {
+    padding: 10px; }
+  .toolbar .configuration-modal-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.3);
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+    .toolbar .configuration-modal-container .configuration-modal {
+      width: 50%;
+      height: 50%;
+      background: white; }
+  .toolbar .hide {
+    display: none; }
+
+#console {
+  height: calc(100% - 40px);
   padding: 5px;
   flex-grow: 1;
   background-color: #EEE;
@@ -17,23 +40,23 @@ html, body, #app {
   column-gap: 5px;
   font-family: Roboto, monospace;
   grid-template: "main-logs-container video-container" 1fr "main-logs-container dashboard-container" 3fr / min-content 2fr; }
-  #app .grid-item {
+  #console .grid-item {
     border: 1px solid #BBB;
     border-radius: 5px; }
-  #app .title {
+  #console .title {
     margin: 5px 5px 10px; }
-  #app .container {
+  #console .container {
     border: 1px solid black;
     border-radius: 5px;
     padding: 15px; }
-  #app .dashboard-container {
+  #console .dashboard-container {
     grid-area: dashboard-container;
     height: 100%;
     overflow: auto; }
-    #app .dashboard-container .controls-container, #app .dashboard-container .data-container {
+    #console .dashboard-container .controls-container, #console .dashboard-container .data-container {
       display: flex;
       flex-wrap: wrap; }
-      #app .dashboard-container .controls-container .input, #app .dashboard-container .data-container .input {
+      #console .dashboard-container .controls-container .input, #console .dashboard-container .data-container .input {
         width: calc(16.6% - 4px);
         margin: 2px;
         padding: 10px;
@@ -47,17 +70,17 @@ html, body, #app {
         height: 60px;
         min-width: 180px;
         min-height: 80px; }
-        #app .dashboard-container .controls-container .input.wide, #app .dashboard-container .data-container .input.wide {
+        #console .dashboard-container .controls-container .input.wide, #console .dashboard-container .data-container .input.wide {
           width: calc(33.2% - 4px); }
-        #app .dashboard-container .controls-container .input.preload, #app .dashboard-container .controls-container .input.pause, #app .dashboard-container .controls-container .input.currentSrc, #app .dashboard-container .controls-container .input.src, #app .dashboard-container .controls-container .input.poster, #app .dashboard-container .controls-container .input.getVideoPlaybackQuality, #app .dashboard-container .data-container .input.preload, #app .dashboard-container .data-container .input.pause, #app .dashboard-container .data-container .input.currentSrc, #app .dashboard-container .data-container .input.src, #app .dashboard-container .data-container .input.poster, #app .dashboard-container .data-container .input.getVideoPlaybackQuality {
+        #console .dashboard-container .controls-container .input.preload, #console .dashboard-container .controls-container .input.pause, #console .dashboard-container .controls-container .input.currentSrc, #console .dashboard-container .controls-container .input.src, #console .dashboard-container .controls-container .input.poster, #console .dashboard-container .controls-container .input.getVideoPlaybackQuality, #console .dashboard-container .data-container .input.preload, #console .dashboard-container .data-container .input.pause, #console .dashboard-container .data-container .input.currentSrc, #console .dashboard-container .data-container .input.src, #console .dashboard-container .data-container .input.poster, #console .dashboard-container .data-container .input.getVideoPlaybackQuality {
           flex-direction: row; }
-          #app .dashboard-container .controls-container .input.preload input[type="text"], #app .dashboard-container .controls-container .input.pause input[type="text"], #app .dashboard-container .controls-container .input.currentSrc input[type="text"], #app .dashboard-container .controls-container .input.src input[type="text"], #app .dashboard-container .controls-container .input.poster input[type="text"], #app .dashboard-container .controls-container .input.getVideoPlaybackQuality input[type="text"], #app .dashboard-container .data-container .input.preload input[type="text"], #app .dashboard-container .data-container .input.pause input[type="text"], #app .dashboard-container .data-container .input.currentSrc input[type="text"], #app .dashboard-container .data-container .input.src input[type="text"], #app .dashboard-container .data-container .input.poster input[type="text"], #app .dashboard-container .data-container .input.getVideoPlaybackQuality input[type="text"] {
+          #console .dashboard-container .controls-container .input.preload input[type="text"], #console .dashboard-container .controls-container .input.pause input[type="text"], #console .dashboard-container .controls-container .input.currentSrc input[type="text"], #console .dashboard-container .controls-container .input.src input[type="text"], #console .dashboard-container .controls-container .input.poster input[type="text"], #console .dashboard-container .controls-container .input.getVideoPlaybackQuality input[type="text"], #console .dashboard-container .data-container .input.preload input[type="text"], #console .dashboard-container .data-container .input.pause input[type="text"], #console .dashboard-container .data-container .input.currentSrc input[type="text"], #console .dashboard-container .data-container .input.src input[type="text"], #console .dashboard-container .data-container .input.poster input[type="text"], #console .dashboard-container .data-container .input.getVideoPlaybackQuality input[type="text"] {
             width: 100%;
             margin-left: 15px;
             padding: 10px; }
-        #app .dashboard-container .controls-container .input:hover > .tooltip, #app .dashboard-container .data-container .input:hover > .tooltip {
+        #console .dashboard-container .controls-container .input:hover > .tooltip, #console .dashboard-container .data-container .input:hover > .tooltip {
           display: block; }
-        #app .dashboard-container .controls-container .input .tooltip, #app .dashboard-container .data-container .input .tooltip {
+        #console .dashboard-container .controls-container .input .tooltip, #console .dashboard-container .data-container .input .tooltip {
           position: absolute;
           margin: 5px;
           padding: 5px;
@@ -66,26 +89,26 @@ html, body, #app {
           background: white;
           z-index: 1000;
           bottom: calc(100% - 5px); }
-      #app .dashboard-container .controls-container .switch, #app .dashboard-container .data-container .switch {
+      #console .dashboard-container .controls-container .switch, #console .dashboard-container .data-container .switch {
         position: relative;
         display: inline-block;
         width: 60px;
         height: 34px; }
-        #app .dashboard-container .controls-container .switch input, #app .dashboard-container .data-container .switch input {
+        #console .dashboard-container .controls-container .switch input, #console .dashboard-container .data-container .switch input {
           opacity: 0;
           width: 0;
           height: 0; }
-          #app .dashboard-container .controls-container .switch input:disabled + .slider, #app .dashboard-container .data-container .switch input:disabled + .slider {
+          #console .dashboard-container .controls-container .switch input:disabled + .slider, #console .dashboard-container .data-container .switch input:disabled + .slider {
             background-color: #dedede; }
-          #app .dashboard-container .controls-container .switch input:checked + .slider, #app .dashboard-container .data-container .switch input:checked + .slider {
+          #console .dashboard-container .controls-container .switch input:checked + .slider, #console .dashboard-container .data-container .switch input:checked + .slider {
             background-color: #2d78f6; }
-            #app .dashboard-container .controls-container .switch input:checked + .slider:before, #app .dashboard-container .data-container .switch input:checked + .slider:before {
+            #console .dashboard-container .controls-container .switch input:checked + .slider:before, #console .dashboard-container .data-container .switch input:checked + .slider:before {
               -webkit-transform: translateX(26px);
               -ms-transform: translateX(26px);
               transform: translateX(26px); }
-          #app .dashboard-container .controls-container .switch input:hover + .slider, #app .dashboard-container .data-container .switch input:hover + .slider {
+          #console .dashboard-container .controls-container .switch input:hover + .slider, #console .dashboard-container .data-container .switch input:hover + .slider {
             box-shadow: 0 0 1px #015CC8; }
-        #app .dashboard-container .controls-container .switch .slider, #app .dashboard-container .data-container .switch .slider {
+        #console .dashboard-container .controls-container .switch .slider, #console .dashboard-container .data-container .switch .slider {
           position: absolute;
           cursor: pointer;
           top: 0;
@@ -95,11 +118,11 @@ html, body, #app {
           background-color: #ccc;
           -webkit-transition: .4s;
           transition: .4s; }
-          #app .dashboard-container .controls-container .switch .slider.round, #app .dashboard-container .data-container .switch .slider.round {
+          #console .dashboard-container .controls-container .switch .slider.round, #console .dashboard-container .data-container .switch .slider.round {
             border-radius: 34px; }
-            #app .dashboard-container .controls-container .switch .slider.round:before, #app .dashboard-container .data-container .switch .slider.round:before {
+            #console .dashboard-container .controls-container .switch .slider.round:before, #console .dashboard-container .data-container .switch .slider.round:before {
               border-radius: 50%; }
-          #app .dashboard-container .controls-container .switch .slider:before, #app .dashboard-container .data-container .switch .slider:before {
+          #console .dashboard-container .controls-container .switch .slider:before, #console .dashboard-container .data-container .switch .slider:before {
             position: absolute;
             content: "";
             height: 26px;
@@ -109,89 +132,94 @@ html, body, #app {
             background-color: white;
             -webkit-transition: .4s;
             transition: .4s; }
-    #app .dashboard-container .segments-container {
+    #console .dashboard-container .segments-container {
       display: flex;
       align-items: center; }
-      #app .dashboard-container .segments-container .seekable-tag {
+      #console .dashboard-container .segments-container .seekable-tag {
         color: #444; }
-      #app .dashboard-container .segments-container .buffered-tag {
+      #console .dashboard-container .segments-container .buffered-tag {
         color: #2d78f6; }
-      #app .dashboard-container .segments-container .played-tag {
+      #console .dashboard-container .segments-container .played-tag {
         color: #11dd11; }
-      #app .dashboard-container .segments-container .segments-area {
+      #console .dashboard-container .segments-container .segments-area {
         width: 100%;
         position: relative;
         margin: 10px 5px 15px; }
-        #app .dashboard-container .segments-container .segments-area .marker {
+        #console .dashboard-container .segments-container .segments-area .marker {
           width: 3px;
           position: absolute;
           pointer-events: none;
           height: 100%;
           z-index: 2; }
-          #app .dashboard-container .segments-container .segments-area .marker::before {
+          #console .dashboard-container .segments-container .segments-area .marker::before {
             position: absolute;
             font-size: 10px;
             top: 100%;
             left: -15px; }
-          #app .dashboard-container .segments-container .segments-area .marker.suggestedTime-marker {
+          #console .dashboard-container .segments-container .segments-area .marker.suggestedTime-marker {
             width: 1px;
             background: white;
             display: none; }
-            #app .dashboard-container .segments-container .segments-area .marker.suggestedTime-marker.show {
+            #console .dashboard-container .segments-container .segments-area .marker.suggestedTime-marker.show {
               display: block; }
-            #app .dashboard-container .segments-container .segments-area .marker.suggestedTime-marker::before {
+            #console .dashboard-container .segments-container .segments-area .marker.suggestedTime-marker::before {
               color: black;
               content: attr(suggestedTime-before); }
-          #app .dashboard-container .segments-container .segments-area .marker.currentTime-marker {
+          #console .dashboard-container .segments-container .segments-area .marker.currentTime-marker {
             background: #aa1111;
             left: 0; }
-            #app .dashboard-container .segments-container .segments-area .marker.currentTime-marker::before {
+            #console .dashboard-container .segments-container .segments-area .marker.currentTime-marker::before {
               color: #aa1111;
               content: attr(currentTime-before); }
-        #app .dashboard-container .segments-container .segments-area .segments-view {
+        #console .dashboard-container .segments-container .segments-area .segments-view {
           width: 100%;
           height: 30px;
           background: lightgrey;
           position: relative;
           pointer-events: none; }
-          #app .dashboard-container .segments-container .segments-area .segments-view .segment {
+          #console .dashboard-container .segments-container .segments-area .segments-view .segment {
             position: absolute;
             text-align: center;
             height: 100%;
             background: #2d78f6;
             color: white;
             border-right: 1px solid white; }
-            #app .dashboard-container .segments-container .segments-area .segments-view .segment.buffered-segment {
+            #console .dashboard-container .segments-container .segments-area .segments-view .segment.buffered-segment {
               background: #2d78f6; }
-              #app .dashboard-container .segments-container .segments-area .segments-view .segment.buffered-segment::before {
+              #console .dashboard-container .segments-container .segments-area .segments-view .segment.buffered-segment::before {
                 color: #015CC8; }
-            #app .dashboard-container .segments-container .segments-area .segments-view .segment.played-segment {
+            #console .dashboard-container .segments-container .segments-area .segments-view .segment.played-segment {
               background: #11dd11;
               height: 70%;
               top: 30%; }
-              #app .dashboard-container .segments-container .segments-area .segments-view .segment.played-segment::before {
+              #console .dashboard-container .segments-container .segments-area .segments-view .segment.played-segment::before {
                 top: 0;
                 color: #115511; }
-            #app .dashboard-container .segments-container .segments-area .segments-view .segment.seekable-segment {
+            #console .dashboard-container .segments-container .segments-area .segments-view .segment.seekable-segment {
               background: #444; }
-              #app .dashboard-container .segments-container .segments-area .segments-view .segment.seekable-segment::before {
+              #console .dashboard-container .segments-container .segments-area .segments-view .segment.seekable-segment::before {
                 top: 0;
                 color: white; }
-            #app .dashboard-container .segments-container .segments-area .segments-view .segment::before {
+            #console .dashboard-container .segments-container .segments-area .segments-view .segment::before {
               color: black;
               content: attr(end-before);
               right: 0;
               position: absolute;
               font-size: 10px;
               top: -10px; }
-  #app .video-container {
+  #console .video-container {
     grid-area: video-container;
     overflow: auto;
     resize: vertical;
     height: 350px; }
-    #app .video-container .video-wrapper {
+    #console .video-container .video-wrapper {
       text-align: center; }
-  #app .main-logs-container {
+      #console .video-container .video-wrapper .lead {
+        width: 330px;
+        height: 180px; }
+    #console .video-container .stats-data.not-synced {
+      color: red; }
+  #console .main-logs-container {
     grid-area: main-logs-container;
     width: 100%;
     min-width: 330px;
@@ -199,51 +227,51 @@ html, body, #app {
     flex-direction: column;
     background-color: rgba(255, 255, 255, 0.9);
     height: 100%; }
-    #app .main-logs-container .log-binds {
+    #console .main-logs-container .log-binds {
       height: 350px;
       display: flex;
       flex-wrap: wrap; }
-      #app .main-logs-container .log-binds .binds-title {
+      #console .main-logs-container .log-binds .binds-title {
         width: 100%;
         display: flex;
         justify-content: space-between;
         margin-left: 10px;
         align-items: center; }
-      #app .main-logs-container .log-binds div {
+      #console .main-logs-container .log-binds div {
         width: 50%; }
-      #app .main-logs-container .log-binds .event {
+      #console .main-logs-container .log-binds .event {
         display: flex; }
-        #app .main-logs-container .log-binds .event > label {
+        #console .main-logs-container .log-binds .event > label {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
           display: block; }
-        #app .main-logs-container .log-binds .event input:checked + label {
+        #console .main-logs-container .log-binds .event input:checked + label {
           font-weight: 500; }
-    #app .main-logs-container .logs-container {
+    #console .main-logs-container .logs-container {
       width: 100%;
       height: calc(100% - 350px); }
-      #app .main-logs-container .logs-container .logs-title {
+      #console .main-logs-container .logs-container .logs-title {
         display: flex;
         justify-content: space-between;
         margin-left: 10px;
         align-items: center; }
-      #app .main-logs-container .logs-container .logs {
+      #console .main-logs-container .logs-container .logs {
         width: 100%;
         min-height: 50px;
         overflow: auto;
         height: calc(100% - 60px); }
-      #app .main-logs-container .logs-container .event {
+      #console .main-logs-container .logs-container .event {
         padding: 5px 0; }
-    #app .main-logs-container .event.error {
+    #console .main-logs-container .event.error {
       color: #ff0000; }
-    #app .main-logs-container .event.play {
+    #console .main-logs-container .event.play {
       color: #276b38; }
-    #app .main-logs-container .event.pause {
+    #console .main-logs-container .event.pause {
       color: #8c2424; }
-    #app .main-logs-container .event.timeupdate {
+    #console .main-logs-container .event.timeupdate {
       color: #2c5a9e; }
-    #app .main-logs-container .event.ended {
+    #console .main-logs-container .event.ended {
       color: #561e87; }
-    #app .main-logs-container .event.volumechange {
+    #console .main-logs-container .event.volumechange {
       color: #c74490; }
