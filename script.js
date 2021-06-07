@@ -89,7 +89,7 @@ if (Hls.isSupported()) {
     // hls.config.autoStartLoad = false;
     hls.loadSource(videoSrc);
     hls.attachMedia(video);
-    window.sdk = new SDK(hls, true);
+    window.sdk = new SDK(hls, new Date(),true);
 
     const leadHls = new Hls();
     window.leadHls = leadHls;
@@ -113,7 +113,7 @@ if (Hls.isSupported()) {
     lead.addEventListener('timeupdate', () => {
         const diff = roundFix(video.currentTime - lead.currentTime, 3);
         statsData.innerHTML = roundFix(diff + '');
-        Math.abs(diff) > 0.15 ? statsData.classList.add('not-synced') : statsData.classList.remove('not-synced');
+        Math.abs(diff) > 0.25 ? statsData.classList.add('not-synced') : statsData.classList.remove('not-synced');
 
     })
     lead.addEventListener('pause', e => {
