@@ -2,7 +2,7 @@
 
 const VIDEO_HEIGHT = 320;
 const VIDEO_WIDTH = 600;
-const VIDEO_POSTER = 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png';
+const VIDEO_POSTER = 'https://sport1images.maariv.co.il/image/upload/f_auto,fl_lossy,c_thumb,g_north,w_640,h_427/1050774';
 const MEDIA_ERROR_CODES = {
     1: 'MEDIA_ERR_ABORTED',
     2: 'MEDIA_ERR_NETWORK',
@@ -78,53 +78,7 @@ initInputs();
 initToolbar();
 initAutomationButtons();
 
-////////////////////// INIT SDK and HLS //////////////////////
-
-const videoSrc = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
-window.lead = document.querySelector('.lead');
-window.statsData = document.querySelector('.stats-data');
-
-if (Hls.isSupported()) {
-    const hls = new Hls();
-    // hls.config.autoStartLoad = false;
-    hls.loadSource(videoSrc);
-    hls.attachMedia(video);
-    window.sdk = new SDK(hls, new Date(),true);
-
-    const leadHls = new Hls();
-    window.leadHls = leadHls;
-    leadHls.config.autoStartLoad = false;
-    // leadHls.loadSource(videoSrc);
-    leadHls.attachMedia(lead);
-    leadHls.on(Hls.Events.MEDIA_ATTACHED, function () {
-        console.log('video and hls.js are now bound together !');
-        leadHls.loadSource(videoSrc);
-        // leadHls.startLoad(400);
-        leadHls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-            leadHls.startLoad(400);
-            // console.log(
-            //     'manifest loaded, found ' + data.levels.length + ' quality level'
-            // );
-        });
-    });
-    lead.addEventListener('play', e => {
-        sdk.sync(true, Date.now(), parseFloat(window.lead.currentTime));
-    })
-    lead.addEventListener('timeupdate', () => {
-        const diff = roundFix(video.currentTime - lead.currentTime, 3);
-        statsData.innerHTML = roundFix(diff + '');
-        Math.abs(diff) > 0.25 ? statsData.classList.add('not-synced') : statsData.classList.remove('not-synced');
-
-    })
-    lead.addEventListener('pause', e => {
-        sdk.sync(false, Date.now(), parseFloat(window.lead.currentTime));
-    })
-}
-
-
 ////////////////////// INIT TOOLBAR FUNCTIONS //////////////////////
-
-
 
 function initToolbar() {
     window.configurationButton = document.querySelector('.configuration-button');
@@ -141,6 +95,7 @@ function initToolbar() {
 
 function initAutomationButtons() {
     window.positionInput = document.getElementById('positionInput');
+    window.serverDelayInput = document.getElementById('serverDelayInput');
     window.positionInputRange = document.getElementById('positionInputRange');
     window.positionInput.addEventListener('input', function(e) {
         if(window.positionInputRange.value !== window.positionInput.value) {
@@ -157,20 +112,13 @@ function initAutomationButtons() {
         window.positionInputRange.setAttribute('max', video.duration);
         window.positionInputRange.removeAttribute('disabled');
     } , false);
+
     window.playFromButton = document.querySelector('.play-from-button');
-    playFromButton.addEventListener('click', () => {
-        // video.currentTime = window.positionInput.value;
-        // video.play()
-        sdk.sync(true, Date.now(), parseFloat(window.positionInput.value));
-    });
+    playFromButton.addEventListener('click', () => useSDKsync(true) );
     window.pauseOnButton = document.querySelector('.pause-on-button');
-    pauseOnButton.addEventListener('click', () => {
-        // video.currentTime = window.positionInput.value;
-        // video.pause()
-        sdk.sync(false, Date.now(), parseFloat(window.positionInput.value));
-    });
+    pauseOnButton.addEventListener('click', () => useSDKsync(false) );
     window.seekToButton = document.querySelector('.seek-to-button');
-    seekToButton.addEventListener('click', () => video.currentTime = window.positionInput.value);
+    seekToButton.addEventListener('click', () => useSDKsync(true) );
 }
 
 ////////////////////// INIT LOG FUNCTIONS //////////////////////
@@ -518,8 +466,10 @@ function initCurrentTimeInput() {
     video.addEventListener('timeupdate', () => document.getElementById('currentTime-data').innerHTML = video.currentTime , false);
     video.addEventListener('timeupdate', () => document.querySelector('.currentTime-input').value = video.currentTime , false);
     video.addEventListener('durationchange', () => document.querySelector('.currentTime-input').setAttribute('max', video.duration), false);
-    video.addEventListener('loadedmetadata', () => document.querySelector('.currentTime-input').setAttribute('value', '0'), false);
-    video.addEventListener('loadedmetadata', () => document.querySelector('.currentTime-input').removeAttribute('disabled'), false);
+    video.addEventListener('loadedmetadata', () => {
+        document.querySelector('.currentTime-input').setAttribute('value', '0');
+        document.querySelector('.currentTime-input').removeAttribute('disabled');
+    }, false);
     currentTimeInput.addEventListener('input', function(e) {
         video.currentTime = e.target.value;
         document.getElementById('currentTime-data').innerHTML = video.currentTime;
@@ -653,4 +603,14 @@ function initSrcInput() {
         video.load();
         document.getElementById('src-data').innerHTML = video.src;
     })
+}
+
+///////////////////// ServerMock ///////////////
+window.serverMock = new ServerMock();
+
+function useSDKsync(isPlay){
+    window.serverMock.UTCtime = new Date();
+    window.serverMock.UTCtime.setSeconds(window.serverMock.UTCtime.getSeconds() - window.serverDelayInput.value);
+    window.serverMock.videoTime = parseFloat(window.positionInput.value);
+    sdk.sync(isPlay, window.serverMock.UTCtime, window.serverMock.videoTime);
 }

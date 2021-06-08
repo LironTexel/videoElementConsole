@@ -7,10 +7,104 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
     <title>Video element console</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!--    SDK.js player-->
     <script src="SDK.js"></script>
+    <!--    ServeMock.js player-->
+    <script src="ServerMock.js"></script>
+    <!--    hls.js player-->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!--    shaka player-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.0.0/shaka-player.compiled.js"></script>
+    <script language="JavaScript">
+        function initPlayer() {
+            var currentTime;
+            var manifestUri = 'https://storage.googleapis.com/shaka-demo-assets/sintel-mp4-wvtt/dash.mpd';
+            // Create a Player instance.
+            var video = document.getElementsByTagName('video')[0];
+            var player = new shaka.Player(video);
+
+            // Attach player to the window to make it easy to access in the JS console.
+            window.player = player;
+
+            // Listen for error events.
+            // player.addEventListener('error', onErrorEvent);
+
+            // Try to load a manifest.
+            // This is an asynchronous process.
+            player.load(manifestUri).then(function() {
+                // This runs if the asynchronous load is successful.
+                console.log('The video has now been loaded!');
+                // video.currentTime = 180;
+            });  // onError is executed if the asynchronous load fails.
+
+            var startTime = currentTime ? currentTime : 0
+            // set buffering goal to 2 minutes
+            player.configure({
+                playRangeStart:startTime,
+                streaming: {
+                    bufferingGoal: 120,
+                }
+            });
+
+            // document.getElementById("kill").addEventListener("click", function(){
+            //     currentTime = video.currentTime
+            //     player.destroy()
+            // });
+            // showStats()
+            // document.getElementById("start").addEventListener("click", function(){
+            //     initPlayer();
+            // });
+        }
+
+        function initShaka(){
+            shaka.polyfill.installAll();
+            // Check to see if the browser supports the basic APIs Shaka needs.
+            if (shaka.Player.isBrowserSupported()) {
+                // Everything looks good!
+                initPlayer();
+            } else {
+                // This browser does not have the minimum set of APIs we need.
+                console.error('Browser not supported!');
+            }
+        }
+
+        function initHLS(){
+            window.statsData = document.querySelector('.stats-data');
+            window.clietnVideoTimeData = document.querySelector('.client-video-time-data');
+            window.serverVideoTimeData = document.querySelector('.server-video-time-data');
+            let video = document.querySelector('.player');
+            if (Hls.isSupported()) {
+                let hls = new Hls();
+                // bind them together
+                hls.attachMedia(video);
+                // MEDIA_ATTACHED event is fired by hls object once MediaSource is ready
+                hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+                    console.log('video and hls.js are now bound together !');
+                    hls.loadSource('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+                    hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+                        console.log(
+                            'manifest loaded, found ' + data.levels.length + ' quality level'
+                        );
+                    });
+                });
+
+                window.sdk = new SDK(hls, new Date(), true);
+
+                video.addEventListener('timeupdate', () => {
+                    window.clietnVideoTimeData.innerHTML = roundFix(video.currentTime, 3);
+                    window.serverVideoTimeData.innerHTML = roundFix(window.serverMock.getCurrentVideoTime(), 3);
+                    const diff = roundFix(window.serverMock.getVideoDiff(video.currentTime), 3);
+                    statsData.innerHTML = roundFix(diff + '');
+                    Math.abs(diff) > 0.25 ? statsData.classList.add('not-synced') : statsData.classList.remove('not-synced');
+                })
+            }
+        }
+
+        window.onload = function() {
+            initHLS();
+        }
+    </script>
 </head>
 <body>
     <div id="app">
@@ -25,10 +119,13 @@
         <div id="console">
             <div class="video-container container grid-item">
                 <div class="video-wrapper">
-                    <video class="lead" controls="controls"></video>
                     <div class="stats">
                         Diff:
                         <span class="stats-data"></span>
+                        Client video Time:
+                        <span class="client-video-time-data"></span>
+                        Server video Time:
+                        <span class="server-video-time-data"></span>
                     </div>
                     <video class="player" preload="none" controls="controls">
     <!--                    short video -->
@@ -68,9 +165,12 @@
                     </div>
                     <div class="pause input">
                         <button class="pause-on-button">Pause On Position</button>
-                    </div>
+                        </div>
                     <div class="pause input">
                         <button class="seek-to-button">Seek To Position</button>
+                    </div>
+                    <div class="input">
+                        Server Delay (MS): <input id="serverDelayInput" type="number" value="0" />
                     </div>
                     <div class="input">
                         Position: <input id="positionInput" type="number" min="0" max="0" value="0" />
