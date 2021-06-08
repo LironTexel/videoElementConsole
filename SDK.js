@@ -6,9 +6,11 @@ class SDK {
     glideLimitMS = 2500;
     MAX_RETRIES = 5;
     debugMode = false;
+
     // init ntpTime as current time with offset 0
     ntpTime = new Date();
     ntpOffset = 0;
+
     SPEED_LEVELS = [
         {
             min: -this.glideLimitMS,
@@ -48,16 +50,18 @@ class SDK {
     ]
     constructor(hlsInstance, ntpTime, debugMode) {
         this.debugMode = debugMode;
+
         // init ntp
         if(ntpTime) {
             this.ntpTime = ntpTime;
             this.ntpOffset = new Date() - ntpTime;
         }
+
         // init hls and video
         if(hlsInstance) {
             this.hlsInstance = hlsInstance;
             this.hlsInstance.config.maxLoadingDelay = 1
-            this.video = hlsInstance._media;
+            this.video = hlsInstance.media;
             this.log('initialized');
         }
         if(this.debugMode) {
@@ -66,12 +70,16 @@ class SDK {
     }
     log(message, params){
         if(this.debugMode){
-            params ? console.log(message, params, new Date().toUTCString()) : console.log(message, new Date().toUTCString());
+            params ? console.log(message, params) : console.log(message);
         }
     }
     sync(isPlay, UTCtime, videoTime, retries = 0) {
         this.log('start calc sync');
-        if (retries > this.MAX_RETRIES) return;
+        if (retries > this.MAX_RETRIES) {
+            this.video.playbackRate = 1; // return to normal speed after finish sync (success or fail)
+            this.log('Fail to sync, stop after ' + this.MAX_RETRIES + ' retries.');
+            return;
+        }
         const differCommandTimeS = (Date.now() - UTCtime) / 1000; //StartTime
         const calibratedVideoTime = differCommandTimeS + videoTime;
         this.log({isPlay, UTCtime, videoTime, retries})
@@ -97,30 +105,38 @@ class SDK {
             )
             this.video.playbackRate = speedLevel.speed;
             this.log('~~~~~~~~~~~ speed: '+ speedLevel.speed);
+
             setTimeout(() => {
                 this.sync(isPlay, UTCtime, videoTime, ++retries);
-            }, 200)
-        }
-        else if (this.hasBuffer(calibratedVideoTime)) {
-            this.log('~~~~~~~~~~~ seek buffer ', calibratedVideoTime)
-            this.videoSeek(calibratedVideoTime);
+            }, 500);
         }
         else {
-            // calculate future time and then seek
-            const downloadSpeedMS = this.calculateDownloadSpeedMS();
-            // we need to calculate the buffer from the final point and not from the videotime
-            let missingMS = this.calcMissingMS(calibratedVideoTime + (downloadSpeedMS * this.playableWindowMS));
-            let downloadTimeMS = missingMS * downloadSpeedMS;
-            let calculateVideoTime = calibratedVideoTime + downloadTimeMS;
-            this.log({calculateVideoTime});
-            this.log('~~~~~~~~~~~ seek ', calculateVideoTime)
-            this.videoSeek(calculateVideoTime);
+
+            if (this.hasBuffer(calibratedVideoTime)) {
+                this.log('~~~~~~~~~~~ seek buffer ', calibratedVideoTime)
+                this.videoSeek(calibratedVideoTime);
+            } else {
+                // calculate future time and then seek
+                const downloadSpeedMS = this.calculateDownloadSpeedMS();
+                // we need to calculate the buffer from the final point and not from the videotime
+                let missingMS = this.calcMissingMS(calibratedVideoTime + (downloadSpeedMS * this.playableWindowMS));
+                let downloadTimeMS = missingMS * downloadSpeedMS;
+                let calculateVideoTime = calibratedVideoTime + downloadTimeMS;
+                this.log({calculateVideoTime});
+                this.log('~~~~~~~~~~~ seek ', calculateVideoTime)
+                this.videoSeek(calculateVideoTime);
+            }
+
+            // use callback function for the remove function
             const callback = () => {
                 this.video.removeEventListener('seeked', callback);
+
                 setTimeout(() => {
                     this.sync(isPlay, UTCtime, videoTime, ++retries);
                 }, 100);
             }
+
+            // on every seek start the work time after the command has been executed
             this.video.addEventListener('seeked', callback);
         }
     }
