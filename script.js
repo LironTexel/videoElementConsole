@@ -610,7 +610,7 @@ window.serverMock = new ServerMock();
 
 function useSDKsync(isPlay){
     window.serverMock.UTCtime = new Date();
-    window.serverMock.UTCtime.setSeconds(window.serverMock.UTCtime.getSeconds() - window.serverDelayInput.value);
+    window.serverMock.UTCtime.setMilliseconds(window.serverMock.UTCtime.getMilliseconds() - window.serverDelayInput.value);
     window.serverMock.videoTime = parseFloat(window.positionInput.value);
     sdk.sync(isPlay, window.serverMock.UTCtime, window.serverMock.videoTime);
 }
