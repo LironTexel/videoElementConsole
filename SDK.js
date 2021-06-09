@@ -103,12 +103,27 @@ class SDK {
             const speedLevel = this.SPEED_LEVELS.find(level =>
                 level.min <= diffTimeMS && diffTimeMS < level.max
             )
+
+            const prevPlaybackRate = this.video.playbackRate;
             this.video.playbackRate = speedLevel.speed;
             this.log('~~~~~~~~~~~ speed: '+ speedLevel.speed);
 
-            setTimeout(() => {
-                this.sync(isPlay, UTCtime, videoTime, ++retries);
-            }, 500);
+            // save callback function for the removeEventListener function
+            const speedCallback = () => {
+                this.video.removeEventListener('ratechange', speedCallback);
+
+                setTimeout(() => {
+                    this.sync(isPlay, UTCtime, videoTime, ++retries);
+                }, 500);
+            }
+
+            if(prevPlaybackRate !== this.video.playbackRate) {
+                // on every speed change start the work time after the command has been executed
+                this.video.addEventListener('ratechange', speedCallback);
+            } else {
+                // same playbackRate didn't rise ratechange and it effective from the start
+                speedCallback();
+            }
         }
         else {
 
@@ -127,9 +142,9 @@ class SDK {
                 this.videoSeek(calculateVideoTime);
             }
 
-            // use callback function for the remove function
-            const callback = () => {
-                this.video.removeEventListener('seeked', callback);
+            // save callback function for the removeEventListener function
+            const seekCallback = () => {
+                this.video.removeEventListener('seeked', seekCallback);
 
                 setTimeout(() => {
                     this.sync(isPlay, UTCtime, videoTime, ++retries);
@@ -137,7 +152,7 @@ class SDK {
             }
 
             // on every seek start the work time after the command has been executed
-            this.video.addEventListener('seeked', callback);
+            this.video.addEventListener('seeked', seekCallback);
         }
     }
     // |-----------------------------|------------------------------|
