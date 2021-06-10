@@ -97,13 +97,8 @@
                     window.serverVideoTimeData.innerHTML = roundFix(window.serverMock.getCurrentVideoTime(), 3);
                     const diff = roundFix(window.serverMock.getVideoDiff(video.currentTime), 3);
                     statsData.innerHTML = roundFix(diff + '');
-                    if(Math.abs(diff) > 0.25) {
-                        statsData.classList.add('not-synced');
-                        window.syncedData.innerHTML = 'False';
-                    } else {
-                        statsData.classList.remove('not-synced');
-                        window.syncedData.innerHTML = 'True';
-                    }
+                    window.syncedData.innerHTML = (Math.abs(+diff) < 0.25) + '';
+                    Math.abs(+diff) > 0.25 ? window.statsData.classList.add('not-synced') : window.statsData.classList.remove('not-synced');
                 });
             }
         }
@@ -187,8 +182,8 @@
                     </div>
                     <div class="input">
                         Video Delay (MS): <input id="videoDelayInput" type="number" value="0" />
-                        <button class="seek-future-button">Seek To Future</button>
-                        <button class="seek-past-button">Seek To Past</button>
+                        <button class="seek-future-button">Seek Forward</button>
+                        <button class="seek-past-button">Seek Backward</button>
                     </div>
                 </div>
 
