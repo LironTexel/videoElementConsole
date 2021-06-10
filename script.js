@@ -97,6 +97,7 @@ function initAutomationButtons() {
     window.positionInput = document.getElementById('positionInput');
     window.serverDelayInput = document.getElementById('serverDelayInput');
     window.positionInputRange = document.getElementById('positionInputRange');
+    window.videoDelayInput = document.getElementById('videoDelayInput');
     window.positionInput.addEventListener('input', function(e) {
         if(window.positionInputRange.value !== window.positionInput.value) {
             window.positionInputRange.value = window.positionInput.value;
@@ -114,11 +115,15 @@ function initAutomationButtons() {
     } , false);
 
     window.playFromButton = document.querySelector('.play-from-button');
-    playFromButton.addEventListener('click', () => useSDKsync(true) );
+    playFromButton.addEventListener('click', () => useSDKsync(true, parseFloat(window.positionInput.value)) );
     window.pauseOnButton = document.querySelector('.pause-on-button');
-    pauseOnButton.addEventListener('click', () => useSDKsync(false) );
+    pauseOnButton.addEventListener('click', () => useSDKsync(false, parseFloat(window.positionInput.value)) );
     window.seekToButton = document.querySelector('.seek-to-button');
-    seekToButton.addEventListener('click', () => useSDKsync(true) );
+    seekToButton.addEventListener('click', () => useSDKsync(true, parseFloat(window.positionInput.value)) );
+    window.seekFutureButton = document.querySelector('.seek-future-button');
+    seekFutureButton.addEventListener('click', () => useSDKsync(true, (video.currentTime + (parseFloat(window.videoDelayInput.value) / 1000))) );
+    window.seekPastButton = document.querySelector('.seek-past-button');
+    seekPastButton.addEventListener('click', () => useSDKsync(true, (video.currentTime - (parseFloat(window.videoDelayInput.value) / 1000))) )
 }
 
 ////////////////////// INIT LOG FUNCTIONS //////////////////////
@@ -608,9 +613,9 @@ function initSrcInput() {
 ///////////////////// ServerMock ///////////////
 window.serverMock = new ServerMock();
 
-function useSDKsync(isPlay){
+function useSDKsync(isPlay, newVideoTime){
     window.serverMock.UTCtime = new Date();
     window.serverMock.UTCtime.setMilliseconds(window.serverMock.UTCtime.getMilliseconds() - window.serverDelayInput.value);
-    window.serverMock.videoTime = parseFloat(window.positionInput.value);
+    window.serverMock.videoTime = newVideoTime;
     sdk.sync(isPlay, window.serverMock.UTCtime, window.serverMock.videoTime);
 }
