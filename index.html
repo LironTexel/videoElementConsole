@@ -71,6 +71,7 @@
 
         function initHLS(){
             window.statsData = document.querySelector('.stats-data');
+            window.syncedData = document.querySelector('.synced-data');
             window.clietnVideoTimeData = document.querySelector('.client-video-time-data');
             window.serverVideoTimeData = document.querySelector('.server-video-time-data');
             let video = document.querySelector('.player');
@@ -96,8 +97,9 @@
                     window.serverVideoTimeData.innerHTML = roundFix(window.serverMock.getCurrentVideoTime(), 3);
                     const diff = roundFix(window.serverMock.getVideoDiff(video.currentTime), 3);
                     statsData.innerHTML = roundFix(diff + '');
-                    Math.abs(diff) > 0.25 ? statsData.classList.add('not-synced') : statsData.classList.remove('not-synced');
-                })
+                    window.syncedData.innerHTML = (Math.abs(+diff) < 0.25) + '';
+                    Math.abs(+diff) > 0.25 ? window.statsData.classList.add('not-synced') : window.statsData.classList.remove('not-synced');
+                });
             }
         }
 
@@ -122,6 +124,8 @@
                     <div class="stats">
                         Diff:
                         <span class="stats-data"></span>
+                        Synced:
+                        <span class="synced-data"></span>
                         Client video Time:
                         <span class="client-video-time-data"></span>
                         Server video Time:
@@ -160,13 +164,13 @@
 
                 <h4 class="title">Automation Actions</h4>
                 <div class="controls-container">
-                    <div class="pause input">
+                    <div class="input">
                         <button class="play-from-button">Play From Position</button>
                     </div>
-                    <div class="pause input">
+                    <div class="input">
                         <button class="pause-on-button">Pause On Position</button>
                         </div>
-                    <div class="pause input">
+                    <div class="input">
                         <button class="seek-to-button">Seek To Position</button>
                     </div>
                     <div class="input">
@@ -175,6 +179,11 @@
                     <div class="input">
                         Position: <input id="positionInput" type="number" min="0" max="0" value="0" />
                         <input id="positionInputRange" class="position-input" type="range" min="0" step="0.1" disabled value="0" />
+                    </div>
+                    <div class="input">
+                        Video Delay (MS): <input id="videoDelayInput" type="number" value="0" />
+                        <button class="seek-future-button">Seek Forward</button>
+                        <button class="seek-past-button">Seek Backward</button>
                     </div>
                 </div>
 
